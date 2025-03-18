@@ -1,12 +1,15 @@
 const express = require("express");
+const cors = require("cors");
+const userRoutes = require("./src/routes/useRoutes");
+
+const User = require("./src/models/User");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
-const cors = require("cors");
+
 const connectDB = require("./src/config/database");
-const userRoutes = require("./src/routes/useRoutes");
-const User = require("./src/models/User");
+require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -19,7 +22,7 @@ app.use(express.json());
 app.use(cors());
 
 // API Creation
-app.use("/users", userRoutes);
+app.use("/api/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World");
