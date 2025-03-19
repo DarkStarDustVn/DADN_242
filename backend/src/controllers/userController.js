@@ -19,7 +19,7 @@ const registerUser = async (req, res) => {
     }
 
     // Hash password
-    // const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Tạo user mới
@@ -110,12 +110,10 @@ const getAllUsers = async (req, res) => {
     const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Lỗi khi thực hiện getAllUsers!",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Lỗi khi thực hiện getAllUsers!",
+      error: error.message,
+    });
   }
 };
 
