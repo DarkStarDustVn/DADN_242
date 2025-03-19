@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/DarkStarDustVn/DADN_242#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "axios": "^1.8.3",
     "backend": "file:",
     "cors": "^2.8.5",
