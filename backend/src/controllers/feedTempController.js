@@ -1,7 +1,6 @@
-// src/controllers/feedCrudController.js
 const FeedTemp = require("../models/FeedTemp");
 
-// Lấy tất cả dữ liệu của feed humidity
+// Lấy tất cả dữ liệu của feed temp
 exports.getAllTempData = async (req, res) => {
     try {
         const data = await FeedTemp.find({});
@@ -11,7 +10,7 @@ exports.getAllTempData = async (req, res) => {
     }
 };
 
-// Lấy một document theo id
+// Lấy theo id
 exports.getTempDataById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -25,7 +24,7 @@ exports.getTempDataById = async (req, res) => {
     }
 };
 
-// Tạo một document mới (nếu cần thiết, ví dụ cho testing)
+// Tạo mới
 exports.createTempData = async (req, res) => {
     try {
         const newDocument = new FeedTemp(req.body);
@@ -36,7 +35,7 @@ exports.createTempData = async (req, res) => {
     }
 };
 
-// Cập nhật một document theo id
+// Cập nhật theo id
 exports.updateTempData = async (req, res) => {
     try {
         const { id } = req.params;
@@ -50,7 +49,7 @@ exports.updateTempData = async (req, res) => {
     }
 };
 
-// Xóa một document theo id
+// Xóa theo id
 exports.deleteTempData = async (req, res) => {
     try {
         const { id } = req.params;
