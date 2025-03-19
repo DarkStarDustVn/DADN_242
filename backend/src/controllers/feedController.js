@@ -8,7 +8,7 @@ const FeedTemp = require("../models/FeedTemp");
 const AIO_USERNAME = process.env.AIO_USERNAME;
 const AIO_KEY = process.env.AIO_KEY;
 
-// Hàm dùng chung để fetch và lưu dữ liệu của một feed
+// fetch và lưu dữ liệu của một feed
 const fetchAndStoreFeed = async (feedName, Model) => {
     try {
         const url = `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${feedName}/data?limit=100`;
@@ -18,27 +18,35 @@ const fetchAndStoreFeed = async (feedName, Model) => {
             headers: { "X-AIO-Key": AIO_KEY }
         });
 
-
         if (Array.isArray(data) && data.length > 0) {
-            // Map mỗi item: gán _id từ item.id và thêm feedName nếu cần
-            const docs = data.map(item => ({
-                ...item,
-                _id: item.id,   // Dùng id của Adafruit làm _id để tránh trùng lặp
-                feedName: feedName,
-            }));
+            const item = data[0]; // Chỉ lấy phần tử mới nhất
 
-            // Thêm tùy chọn { ordered: false } để nếu có lỗi duplicate, các document khác vẫn được insert
-            const insertedDocs = await Model.insertMany(docs, { ordered: false });
-            return { feedName, insertedCount: insertedDocs.length };
+            // Kiểm tra nếu dữ liệu đã tồn tại
+            const existingDoc = await Model.findOne({ _id: item.id });
+            if (!existingDoc) {
+                const doc = new Model({
+                    ...item,
+                    _id: item.id,  // Dùng id của Adafruit làm _id
+                    feedName: feedName,
+                });
+
+                await doc.save();
+                console.log(`${feedName}: Inserted new data`);
+                return { feedName, inserted: true };
+            } else {
+                console.log(`${feedName}: No new data`);
+                return { feedName, inserted: false };
+            }
         } else {
             return { feedName, insertedCount: 0 };
         }
+
     } catch (error) {
         throw error;
     }
 };
 
-// Controller cho bbc-humidity
+// bbc-humidity
 exports.fetchBbcHumidityData = async (req, res) => {
     try {
         const result = await fetchAndStoreFeed("bbc-humidity", FeedHumidity);
@@ -54,7 +62,7 @@ exports.fetchBbcHumidityData = async (req, res) => {
     }
 };
 
-// Controller cho bbc-led
+// bbc-led
 exports.fetchBbcLedData = async (req, res) => {
     try {
         const result = await fetchAndStoreFeed("bbc-led", FeedLed);
@@ -70,7 +78,7 @@ exports.fetchBbcLedData = async (req, res) => {
     }
 };
 
-// Controller cho bbc-temp
+// bbc-temp
 exports.fetchBbcTempData = async (req, res) => {
     try {
         const result = await fetchAndStoreFeed("bbc-temp", FeedTemp);

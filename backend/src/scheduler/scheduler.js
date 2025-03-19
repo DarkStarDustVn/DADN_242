@@ -1,3 +1,4 @@
+
 // src/scheduler/scheduler.js
 const feedController = require('../controllers/feedController');
 
@@ -23,7 +24,7 @@ const scheduleFetchData = () => {
         } catch (error) {
             console.error("Lỗi khi fetch dữ liệu:", error);
         }
-    }, 5000); // 60000 ms = 60 giây
+    }, 1000); // 60000 ms = 60 giây
 };
 
 scheduleFetchData();

@@ -1,4 +1,3 @@
-// src/controllers/feedCrudController.js
 const FeedHumidity = require("../models/FeedHumidity");
 
 // Lấy tất cả dữ liệu của feed humidity
@@ -11,7 +10,7 @@ exports.getAllHumidityData = async (req, res) => {
     }
 };
 
-// Lấy một document theo id
+// Lấy theo id
 exports.getHumidityDataById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -25,7 +24,7 @@ exports.getHumidityDataById = async (req, res) => {
     }
 };
 
-// Tạo một document mới (nếu cần thiết, ví dụ cho testing)
+// Tạo mới
 exports.createHumidityData = async (req, res) => {
     try {
         const newDocument = new FeedHumidity(req.body);
@@ -36,7 +35,7 @@ exports.createHumidityData = async (req, res) => {
     }
 };
 
-// Cập nhật một document theo id
+// Cập nhật theo id
 exports.updateHumidityData = async (req, res) => {
     try {
         const { id } = req.params;
@@ -50,7 +49,7 @@ exports.updateHumidityData = async (req, res) => {
     }
 };
 
-// Xóa một document theo id
+// Xóa theo id
 exports.deleteHumidityData = async (req, res) => {
     try {
         const { id } = req.params;
