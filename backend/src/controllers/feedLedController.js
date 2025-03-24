@@ -1,7 +1,6 @@
-// src/controllers/feedCrudController.js
 const FeedLed = require("../models/FeedLed");
 
-// Lấy tất cả dữ liệu của feed humidity
+// Lấy tất cả dữ liệu của feed led
 exports.getAllLedData = async (req, res) => {
     try {
         const data = await FeedLed.find({});
@@ -11,7 +10,7 @@ exports.getAllLedData = async (req, res) => {
     }
 };
 
-// Lấy một document theo id
+// Lấy theo id
 exports.getLedDataById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -25,7 +24,7 @@ exports.getLedDataById = async (req, res) => {
     }
 };
 
-// Tạo một document mới (nếu cần thiết, ví dụ cho testing)
+// Tạo mới
 exports.createLedData = async (req, res) => {
     try {
         const newDocument = new FeedLed(req.body);
@@ -36,7 +35,7 @@ exports.createLedData = async (req, res) => {
     }
 };
 
-// Cập nhật một document theo id
+// Cập nhật theo id
 exports.updateLedData = async (req, res) => {
     try {
         const { id } = req.params;
@@ -50,7 +49,7 @@ exports.updateLedData = async (req, res) => {
     }
 };
 
-// Xóa một document theo id
+// Xóa theo id
 exports.deleteLedData = async (req, res) => {
     try {
         const { id } = req.params;
