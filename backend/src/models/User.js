@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
+      unique: true,
       match: [/^\d{10,15}$/, "Số điện thoại không hợp lệ"],
     },
     address: {

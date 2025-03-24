@@ -19,8 +19,7 @@ const registerUser = async (req, res) => {
     }
 
     // Hash password
-    // const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Tạo user mới
     const newUser = new User({
@@ -79,55 +78,62 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Lấy thông tin user (Profile): [GET]: /api/users/profile
-const getUserProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password"); // Ẩn password
-    if (!user) {
-      return res.status(404).json({ message: "Không tìm thấy user" });
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: "Lỗi server", error: error.message });
-  }
-};
-
-// //  Tạo user mới (CREATE)
-// const createUser = async (req, res) => {
-//   try {
-//     const newUser = new User(req.body);
-//     await newUser.save();
-//     res.status(201).json(newUser);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
-
-//  Lấy danh sách tất cả users (READ): [GET] /api/users
+//  Lấy danh sách thông tin tất cả users (READ): [GET] /api/users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select("-password");
     res.status(200).json(users);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Lỗi khi thực hiện getAllUsers!",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Lỗi khi thực hiện getAllUsers!",
+      error: error.message,
+    });
   }
 };
 
-//  Cập nhật user theo ID (UPDATE)
+// Lấy thông tin 1 user bằng id: [GET]: /api/users/:id
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select("-password"); // Ẩn password
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy User ID" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi thực hiện getUserById!" });
+  }
+};
+
+//  Cập nhật user theo ID (UPDATE): [PUT]: /api/users/:id
 const updateUser = async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
+    const { id } = req.params;
+
+    // Kiểm tra ObjectId có hợp lệ không
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "User ID không hợp lệ" });
+    }
+
+    // Tìm user trong database
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+
+    // Nếu có trường password, băm mật khẩu trước khi cập nhật
+    if (req.body.password) {
+      req.body.password = bcrypt.hash(req.body.password, 10);
+    }
+
+    // Cập nhật user với các dữ liệu mới
+    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+      new: true, // Trả về dữ liệu sau khi update
+      runValidators: true, // Áp dụng các validate trong schema User.js
     });
-    res.status(200).json(updatedUser);
+
+    res.status(200).json({ message: "Cập nhật thành công", user: updatedUser });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };
 
@@ -144,7 +150,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  getUserProfile,
+  getUserById,
   getAllUsers,
   updateUser,
   deleteUser,
