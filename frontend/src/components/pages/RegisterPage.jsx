@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import axios from 'axios';
 import smartHomeImg from "../../assets/smart-home.jpg";
-import '../CSS config/RegisterPage.css';
+import '../CSS_config/RegisterPage.css';
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');

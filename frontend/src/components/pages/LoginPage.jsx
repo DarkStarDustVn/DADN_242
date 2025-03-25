@@ -3,7 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import smartHomeImg from "../../assets/smart-home.jpg";
-import "../CSS config/LoginPage.css";
+import "../CSS_config/LoginPage.css";
 
 const LoginPage = () => {
   const [email, setEmail] = React.useState("");

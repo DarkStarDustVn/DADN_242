@@ -1,7 +1,7 @@
 import { useRouteError } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async';
 import { NavLink } from 'react-router-dom';
-import '../CSS config/ErrorPage.css'
+import '../CSS_config/ErrorPage.css'
 
 export default function ErrorPage() {
     const error = useRouteError();
