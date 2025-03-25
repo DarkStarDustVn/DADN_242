@@ -4,7 +4,7 @@ const DevicesPage = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-4">Quản lý thiết bị</h3>
+
         <div className="flex justify-between items-center mb-4">
           <div className="relative">
             <input 
