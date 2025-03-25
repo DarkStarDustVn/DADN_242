@@ -12,10 +12,7 @@ axios.get('http://localhost:8000/api/users/')
 const ProfilePage = () => {
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-4">Hồ sơ người dùng</h3>
-      </div>
-      
+     
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Profile Information */}
         <div className="md:col-span-1">

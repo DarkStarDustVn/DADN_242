@@ -19,7 +19,7 @@ const Dashboard = () => {
     if (path === '/dashboard') return 'Trang chủ';
     if (path.startsWith('/devices')) return 'Quản lý thiết bị';
     if (path.startsWith('/usage')) return 'Dữ liệu sử dụng';
-    if (path.startsWith('/profile')) return 'Hồ sơ';
+    if (path.startsWith('/profile')) return 'Hồ sơ người dùng';
     return 'Dashboard';
   };
   

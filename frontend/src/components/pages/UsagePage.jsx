@@ -22,7 +22,7 @@ const UsagePage = () => {
                     date : new Date(data.created_at).toLocaleDateString(),
                 })));
 
-                const Led_brightness_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-led/data`);
+                const Led_brightness_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-ir/data`);
                 setLedBrightnessData(Led_brightness_data.data.map((data) => ({
                     led_brightness_value : data.value,
                     date : new Date(data.created_at).toLocaleDateString(),
@@ -41,7 +41,7 @@ const UsagePage = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-4">Dữ liệu sử dụng thiết bị</h3>
+
         <div className="flex justify-between items-center mb-4">
           <div className="flex space-x-2">
             <select className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
@@ -132,28 +132,28 @@ const UsagePage = () => {
         
         {/* LED Brightness Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-semibold mb-4">Độ sáng đèn LED</h4>
+          <h4 className="font-semibold mb-4">Độ sáng</h4>
           <div className="h-80 bg-violet-100 rounded-lg p-4">
             {LedBrightnessData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={LedBrightnessData.slice(0, 30).reverse()}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
-                  <YAxis />
+                  <YAxis dataKey= "led_brightness_value"/>
                   <Tooltip />
                   <Legend />
                   <Line 
                     type="monotone" 
                     dataKey="led_brightness_value" 
-                    name="Độ sáng đèn LED"
+                    name="Độ sáng"
                     stroke="#ffc658" 
                     activeDot={{ r: 8 }} 
                   />
                   <Tooltip formatter={(value, name, props) => {
-                    if (name === "Độ sáng đèn LED") {
+                    if (name === "Độ sáng ") {
                       return [`${value} (${props.payload.time})`, name];
                     }
                     return [value, name];
@@ -161,7 +161,7 @@ const UsagePage = () => {
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <p className="text-gray-500 flex items-center justify-center h-full">Đang tải dữ liệu độ sáng đèn LED...</p>
+              <p className="text-gray-500 flex items-center justify-center h-full">Đang tải dữ liệu độ sáng...</p>
             )}
           </div>
         </div>
