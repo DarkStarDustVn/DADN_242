@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import './Dashboard.css';
+import '../CSS_config/Dashboard.css';
 
 const Dashboard = () => {
   const location = useLocation();
@@ -19,7 +19,7 @@ const Dashboard = () => {
     if (path === '/dashboard') return 'Trang chủ';
     if (path.startsWith('/devices')) return 'Quản lý thiết bị';
     if (path.startsWith('/usage')) return 'Dữ liệu sử dụng';
-    if (path.startsWith('/profile')) return 'Hồ sơ';
+    if (path.startsWith('/profile')) return 'Hồ sơ người dùng';
     return 'Dashboard';
   };
   

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import smartHomeImg from '../assets/smart-home.jpg';
-import './ForgotPasswordPage.css';
+import smartHomeImg from "../../assets/smart-home.jpg";
+import '../CSS_config/ForgotPasswordPage.css';
 
 const ForgotPasswordPage = () => {
   return (

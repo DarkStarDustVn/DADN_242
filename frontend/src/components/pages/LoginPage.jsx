@@ -2,8 +2,8 @@ import React from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import smartHomeImg from "../assets/smart-home.jpg";
-import "./LoginPage.css";
+import smartHomeImg from "../../assets/smart-home.jpg";
+import "../CSS_config/LoginPage.css";
 
 const LoginPage = () => {
   const [email, setEmail] = React.useState("");
@@ -50,9 +50,36 @@ const LoginPage = () => {
       }
     }
   };
-  axios.get("http://localhost:8000/api/users").then((response) => {
-    console.log(response.data);
-  });
+  // axios.interceptors.request.use(
+  //   (config) => {
+  //     const token = localStorage.getItem("token");
+  //     if (token) {
+  //       config.headers.Authorization = `Bearer ${token}`;
+  //     }
+  //     return config;
+  //   },
+  //   (error) => {
+  //     return Promise.reject(error);
+  //   }
+  // );
+  const handleLogout = () => {
+    // Clear user data from local storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    // Redirect to the login page
+    navigate("/login");
+  };
+  const isLoggedIn = () => {
+    const token = localStorage.getItem("token");
+    return !!token;
+  };
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (isLoggedIn()) {
+    // Redirect to the dashboard
+    navigate("/dashboard");
+  }
+  
   return (
     <div className="flex h-screen w-full">
       <Helmet>
