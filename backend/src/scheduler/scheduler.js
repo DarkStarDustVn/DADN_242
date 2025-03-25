@@ -19,12 +19,15 @@ const scheduleFetchData = () => {
             await feedController.fetchBbcHumidityData({}, dummyRes);
             await feedController.fetchBbcLedData({}, dummyRes);
             await feedController.fetchBbcTempData({}, dummyRes);
+            await feedController.fetchBbcFanData({}, dummyRes);
+            await feedController.fetchBbcIrData({}, dummyRes);
+            await feedController.fetchBbcPirData({}, dummyRes);
 
             console.log("Fetch dữ liệu hoàn tất.");
         } catch (error) {
             console.error("Lỗi khi fetch dữ liệu:", error);
         }
-    }, 1000); // 60000 ms = 60 giây
+    }, 3600000);
 };
 
 scheduleFetchData();
