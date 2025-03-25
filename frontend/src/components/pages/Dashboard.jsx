@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import './Dashboard.css';
+import '../CSS config/Dashboard.css';
 
 const Dashboard = () => {
   const location = useLocation();

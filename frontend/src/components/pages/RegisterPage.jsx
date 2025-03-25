@@ -1,10 +1,57 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import smartHomeImg from '../assets/smart-home.jpg';
-import './RegisterPage.css'
+import axios from 'axios';
+import smartHomeImg from "../../assets/smart-home.jpg";
+import '../CSS config/RegisterPage.css';
 
 const RegisterPage = () => {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
+
+  const handleRegister = async(e) => {
+    e.preventDefault();
+    
+    // Form validation
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      setError('Please fill in all fields');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await axios.post('http://localhost:8000/api/users/register', {
+        firstName,
+        lastName,
+        email,
+        password
+      });
+      
+      if (response.data) {
+        // Registration successful
+        navigate('/'); // Redirect to login page
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex h-screen w-full">
       <Helmet>
@@ -27,19 +74,39 @@ const RegisterPage = () => {
       {/* Right side - Registration Form */}
       <div className="w-full md:w-1/4 flex items-center justify-center bg-gray-900 text-white p-8">
         <div className="w-full max-w-md">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8">
             <h1 className="text-4xl font-bold mb-2">Create Account</h1>
             <p className="text-gray-400">Sign up to start controlling your smart home</p>
           </div>
           
-          <form className="space-y-6">
+          {error && (
+            <div className="bg-red-500 text-white p-3 rounded-md mb-4">
+              {error}
+            </div>
+          )}
+          
+          <form className="space-y-4" onSubmit={handleRegister}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-400 mb-1">First Name</label>
               <input 
                 type="text" 
-                id="name" 
+                id="firstName" 
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your full name"
+                placeholder="Enter your first name"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-400 mb-1">Last Name</label>
+              <input 
+                type="text" 
+                id="lastName" 
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter your last name"
               />
             </div>
             
@@ -48,6 +115,8 @@ const RegisterPage = () => {
               <input 
                 type="email" 
                 id="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter your email"
               />
@@ -58,6 +127,8 @@ const RegisterPage = () => {
               <input 
                 type="password" 
                 id="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Create a password"
               />
@@ -68,6 +139,8 @@ const RegisterPage = () => {
               <input 
                 type="password" 
                 id="confirmPassword" 
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Confirm your password"
               />
@@ -76,9 +149,10 @@ const RegisterPage = () => {
             <div>
               <button 
                 type="submit" 
-                className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                disabled={loading}
+                className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-70"
               >
-                Create Account
+                {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </div>
             

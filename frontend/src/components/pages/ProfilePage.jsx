@@ -1,5 +1,14 @@
 import React from 'react';
+import axios from 'axios';
 
+axios.get('http://localhost:8000/api/users/')
+  .then(response => {
+    console.log(response.data);
+    
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
 const ProfilePage = () => {
   return (
     <div className="p-6">

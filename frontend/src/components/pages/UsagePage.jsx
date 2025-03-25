@@ -77,8 +77,8 @@ const UsagePage = () => {
             {TemperatureData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
-                  data={TemperatureData.slice(0, 7).reverse()}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                  data={TemperatureData.slice(0, 50).reverse()}
+                  margin={{ top: 10, right: 60, left: 40, bottom: 10 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
@@ -102,12 +102,12 @@ const UsagePage = () => {
         
         {/* Humidity Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-semibold mb-4">Độ ẩm (7 ngày qua)</h4>
+          <h4 className="font-semibold mb-4">Độ ẩm</h4>
           <div className="h-80 bg-violet-100 rounded-lg p-4">
             {HumidityData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
-                  data={HumidityData.slice(0, 7).reverse()}
+                  data={HumidityData.slice(0, 50).reverse()}
                   margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
@@ -132,7 +132,7 @@ const UsagePage = () => {
         
         {/* LED Brightness Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-semibold mb-4">Độ sáng đèn LED (7 ngày qua)</h4>
+          <h4 className="font-semibold mb-4">Độ sáng đèn LED</h4>
           <div className="h-80 bg-violet-100 rounded-lg p-4">
             {LedBrightnessData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
