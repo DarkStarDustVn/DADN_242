@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+:root {
+  --primary: #bc4123;
+  --secondary: #2b3452;
+}
+#error-page {
+  margin: 0;
+  padding: 320px;
+  font-family: "Poppins";
+  text-align: center;
+  background-color: var(--secondary);
+  color: #fff;
+}
