@@ -13,6 +13,9 @@ const feedRoutes = require("./src/routes/feedRoutes"); // route đã dùng để
 const feedHumidityRoutes = require("./src/routes/feedHumidityRoutes"); // route CRUD
 const feedLedRoutes = require("./src/routes/feedLedRoutes"); // route CRUD
 const feedTempRoutes = require("./src/routes/feedTempRoutes"); // route CRUD
+const feedFanRoutes = require("./src/routes/feedFanRoutes"); // route CRUD
+const feedIrRoutes = require("./src/routes/feedIrRoutes"); // route CRUD
+const feedPirRoutes = require("./src/routes/feedPirRoutes"); // route CRUD
 require("dotenv").config();
 
 const app = express();
@@ -30,6 +33,9 @@ app.use("/feeds", feedRoutes);      // API fetch dữ liệu từ Adafruit
 app.use("/api/humidity", feedHumidityRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 app.use("/api/led", feedLedRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 app.use("/api/temp", feedTempRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
+app.use("/api/fan", feedFanRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
+app.use("/api/ir", feedIrRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
+app.use("/api/pir", feedPirRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 
 app.get("/", (req, res) => {
   res.send("Hello World");
