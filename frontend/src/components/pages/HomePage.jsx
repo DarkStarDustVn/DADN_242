@@ -37,18 +37,18 @@ const HomePage = () => {
           </div>
         </div>
         
-        {/* Energy Usage Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+        {/* Brightness Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-green-100 mr-4">
-              <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            <div className="p-3 rounded-full bg-yellow-100 mr-4">
+              <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
               </svg>
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Energy Usage</p>
-              <p className="text-2xl font-semibold">3.4 kWh</p>
-              <p className="text-green-500 text-sm">-12% from yesterday</p>
+              <p className="text-gray-500 text-sm">Độ sáng</p>
+              <p className="text-2xl font-semibold">65%</p>
+              <p className="text-yellow-500 text-sm">+8% from yesterday</p>
             </div>
           </div>
         </div>
