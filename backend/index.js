@@ -16,6 +16,7 @@ const feedTempRoutes = require("./src/routes/feedTempRoutes"); // route CRUD
 const feedFanRoutes = require("./src/routes/feedFanRoutes"); // route CRUD
 const feedIrRoutes = require("./src/routes/feedIrRoutes"); // route CRUD
 const feedPirRoutes = require("./src/routes/feedPirRoutes"); // route CRUD
+const feedStateRoutes = require("./src/routes/feedStateRoutes"); // route CRUD
 require("dotenv").config();
 
 const app = express();
@@ -36,6 +37,7 @@ app.use("/api/temp", feedTempRoutes); // API CRUD cho dữ liệu lấy từ Ada
 app.use("/api/fan", feedFanRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 app.use("/api/ir", feedIrRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 app.use("/api/pir", feedPirRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
+app.use("/api/state", feedStateRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 
 app.get("/", (req, res) => {
   res.send("Hello World");

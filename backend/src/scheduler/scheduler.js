@@ -22,6 +22,7 @@ const scheduleFetchData = () => {
             await feedController.fetchBbcFanData({}, dummyRes);
             await feedController.fetchBbcIrData({}, dummyRes);
             await feedController.fetchBbcPirData({}, dummyRes);
+            await feedController.fetchBbcStateData({}, dummyRes);
 
             console.log("Fetch dữ liệu hoàn tất.");
         } catch (error) {

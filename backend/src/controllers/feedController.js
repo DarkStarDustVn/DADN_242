@@ -7,6 +7,7 @@ const FeedTemp = require("../models/FeedTemp");
 const FeedFan = require("../models/FeedFan");
 const FeedIr = require("../models/FeedIr");
 const FeedPir = require("../models/FeedPir");
+const FeedState = require("../models/FeedState");
 
 
 
@@ -34,7 +35,15 @@ const fetchAndStoreFeed = async (feedName, Model) => {
                     _id: item.id,  // Dùng id của Adafruit làm _id
                     feedName: feedName,
                 });
+                const utcDate = new Date(item.created_at);
+                const vnDate = new Date(utcDate.getTime() + 7 * 60 * 60 * 1000);
+                const pad = (n) => n.toString().padStart(2, '0');
+                const formattedVNDate = `${vnDate.getFullYear()}/${pad(vnDate.getMonth() + 1)}/${pad(vnDate.getDate())} ` +
+                    `${pad(vnDate.getHours())}:${pad(vnDate.getMinutes())}:${pad(vnDate.getSeconds())}`;
 
+                docData.created_at = formattedVNDate;
+                docData.created_epoch = Math.floor(vnDate.getTime() / 1000);
+                // const doc = new Model(docData);
                 await doc.save();
                 console.log(`${feedName}: Inserted new data`);
                 return { feedName, inserted: true };
@@ -65,24 +74,32 @@ const fetchAndStoreFeed = async (feedName, Model) => {
 //                 headers: { "X-AIO-Key": AIO_KEY }
 //             });
 
-//             // Nếu không có dữ liệu nào thì kết thúc vòng lặp
 //             if (!Array.isArray(data) || data.length === 0) {
 //                 hasMore = false;
 //                 break;
 //             }
 
-//             // Duyệt từng item trong data trả về
 //             for (const item of data) {
-//                 // Kiểm tra nếu dữ liệu đã tồn tại (dựa trên _id)
 //                 const existingDoc = await Model.findOne({ _id: item.id });
 //                 if (!existingDoc) {
-//                     const doc = new Model({
+//                     let docData = {
 //                         ...item,
-//                         _id: item.id,  // Dùng id của Adafruit làm _id
+//                         _id: item.id,
 //                         feedName: feedName,
-//                     });
+//                     };
+//                     const utcDate = new Date(item.created_at);
+//                     const vnDate = new Date(utcDate.getTime() + 7 * 60 * 60 * 1000);
+//                     const pad = (n) => n.toString().padStart(2, '0');
+//                     const formattedVNDate = `${vnDate.getFullYear()}/${pad(vnDate.getMonth() + 1)}/${pad(vnDate.getDate())} ` +
+//                         `${pad(vnDate.getHours())}:${pad(vnDate.getMinutes())}:${pad(vnDate.getSeconds())}`;
 
+//                     docData.created_at = formattedVNDate;
+//                     docData.created_epoch = Math.floor(vnDate.getTime() / 1000);
+
+
+//                     const doc = new Model(docData);
 //                     await doc.save();
+
 //                     console.log(`${feedName}: Inserted new data with id ${item.id}`);
 //                     insertedCount++;
 //                 } else {
@@ -90,7 +107,6 @@ const fetchAndStoreFeed = async (feedName, Model) => {
 //                 }
 //             }
 
-//             // Cập nhật offset
 //             offset += data.length;
 //         }
 
@@ -99,7 +115,6 @@ const fetchAndStoreFeed = async (feedName, Model) => {
 //         throw error;
 //     }
 // };
-
 
 // bbc-humidity
 exports.fetchBbcHumidityData = async (req, res) => {
@@ -191,6 +206,21 @@ exports.fetchBbcPirData = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             message: "Error fetching bbc-pir data",
+            error: error.message,
+        });
+    }
+};
+
+exports.fetchBbcStateData = async (req, res) => {
+    try {
+        const result = await fetchAndStoreFeed("bbc-state", FeedState);
+        res.status(200).json({
+            message: "Fetched and stored bbc-state data",
+            result,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error fetching bbc-state data",
             error: error.message,
         });
     }
