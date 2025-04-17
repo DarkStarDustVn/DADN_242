@@ -23,9 +23,9 @@
   },
   "homepage": "https://github.com/DarkStarDustVn/DADN_242#readme",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
     "axios": "^1.8.3",
     "backend": "file:",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
