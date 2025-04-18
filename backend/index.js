@@ -8,6 +8,7 @@ const multer = require("multer");
 const path = require("path");
 
 const connectDB = require("./src/config/database");
+const authRoutes = require("./src/routes/authRoutes")
 const userRoutes = require("./src/routes/useRoutes");
 const feedRoutes = require("./src/routes/feedRoutes"); // route đã dùng để fetch dữ liệu từ Adafruit
 const feedHumidityRoutes = require("./src/routes/feedHumidityRoutes"); // route CRUD
@@ -28,8 +29,9 @@ app.use(cors());
 
 // API Creation
 app.use("/api/users", userRoutes);
+app.use('/api/auth', authRoutes);
 
-app.use("/feeds", feedRoutes);      // API fetch dữ liệu từ Adafruit
+app.use("/feeds", feedRoutes); // API fetch dữ liệu từ Adafruit
 app.use("/api/humidity", feedHumidityRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 app.use("/api/led", feedLedRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 app.use("/api/temp", feedTempRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
@@ -38,11 +40,11 @@ app.use("/api/ir", feedIrRoutes); // API CRUD cho dữ liệu lấy từ Adafrui
 app.use("/api/pir", feedPirRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("BackEnd SmartHome Group 13!!!");
 });
 
 // Kích hoạt scheduler
-require('./src/scheduler/scheduler');
+require("./src/scheduler/scheduler");
 
 app.listen(port, (error) => {
   if (!error) {
