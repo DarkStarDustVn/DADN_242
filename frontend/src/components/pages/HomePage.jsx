@@ -138,15 +138,16 @@ const HomePage = () => {
               </svg>
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Energy Usage</p>
-              <p className="text-2xl font-semibold">3.4 kWh</p>
-              <p className="text-green-500 text-sm">-12% from yesterday</p>
+              <p className="text-gray-500 text-sm">Độ sáng</p>
+              <p className="text-2xl font-semibold">{latestIr ? `${latestIr}%` : '--'}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Data Visualization Section */}
+
+
+      {/* Chart Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h3 className="text-lg font-semibold mb-4">Energy Consumption Last 30 Days</h3>
         <div className="bg-violet-100 rounded-lg" style={{ width: '100%', height: 320 }}>
