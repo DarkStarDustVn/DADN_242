@@ -20,7 +20,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Humidity Card */}
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
           <div className="flex items-center">
@@ -36,7 +36,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Brightness Card */}
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
           <div className="flex items-center">
@@ -53,7 +53,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Data Visualization Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h3 className="text-lg font-semibold mb-4">Thống kê dữ liệu</h3>
@@ -61,7 +61,7 @@ const HomePage = () => {
           <p className="text-gray-500">Data visualization chart will be displayed here</p>
         </div>
       </div>
-      
+
       {/* Device Status Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -97,7 +97,7 @@ const HomePage = () => {
             </li>
           </ul>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-lg font-semibold mb-4">Recent Activities</h3>
           <ul className="divide-y divide-gray-200">
