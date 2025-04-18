@@ -11,6 +11,7 @@ import HomePage from './components/pages/HomePage.jsx';
 import DevicesPage from './components/pages/DevicesPage.jsx';
 import UsagePage from './components/pages/UsagePage.jsx';
 import ProfilePage from './components/pages/ProfilePage.jsx';
+import ResetPasswordPage from './components/pages/ResetPasswordPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,11 @@ const router = createBrowserRouter([
   {
     path: '/forgot-password',
     element: <ForgotPasswordPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path:'/reset-password/:token',
+    element: <ResetPasswordPage />,
     errorElement: <ErrorPage />,
   },
   {

@@ -1,3 +1,8 @@
 MONGO_URI="mongodb+srv://<db_account>:<db_password>@cluster0.z24zl.mongodb.net/SmartHomeDB?retryWrites=true&w=majority&appName=Cluster0"
 PORT=8000
 JWT_SECRET="random#secret"
+AIO_USERNAME=<adafruit_username>
+AIO_KEY=<adafruit_key>
+EMAIL_USER=<email_admin_gui_dat_lai_mat_khau>
+EMAIL_PASS=<app_password>
+FRONTEND_URL=http://localhost:5173

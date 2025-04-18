@@ -29,6 +29,9 @@ const userSchema = new mongoose.Schema(
     address: {
       type: String,
     },
+    // Trường dùng cho quên mật khẩu
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
   },
   {
     timestamps: true,
