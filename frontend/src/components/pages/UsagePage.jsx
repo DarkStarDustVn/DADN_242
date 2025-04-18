@@ -73,7 +73,7 @@ const UsagePage = () => {
         {/* Temperature Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-4">Nhiệt độ (7 ngày qua)</h4>
-          <div className="h-80 bg-violet-100 rounded-lg p-4">
+          <div className="h-80 rounded-lg p-4">
             {TemperatureData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -89,7 +89,7 @@ const UsagePage = () => {
                     type="monotone"
                     dataKey="temp_value"
                     name="Nhiệt độ (°C)"
-                    stroke="#8884d8"
+                    stroke="#ff7c58"
                     activeDot={{ r: 8 }}
                   />
                 </LineChart>
@@ -103,7 +103,7 @@ const UsagePage = () => {
         {/* Humidity Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-4">Độ ẩm</h4>
-          <div className="h-80 bg-violet-100 rounded-lg p-4">
+          <div className="h-80 rounded-lg p-4">
             {HumidityData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -133,11 +133,11 @@ const UsagePage = () => {
         {/* LED Brightness Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-4">Độ sáng</h4>
-          <div className="h-80 bg-violet-100 rounded-lg p-4">
+          <div className="h-80 bg-white-100 rounded-lg p-4">
             {LedBrightnessData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
-                  data={LedBrightnessData.slice(0, 30).reverse()}
+                  data={LedBrightnessData.slice(0, 50).reverse()}
                   margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
@@ -149,11 +149,11 @@ const UsagePage = () => {
                     type="monotone"
                     dataKey="led_brightness_value"
                     name="Độ sáng"
-                    stroke="#ffc658"
+                    stroke="#6e58ff"
                     activeDot={{ r: 8 }}
                   />
                   <Tooltip formatter={(value, name, props) => {
-                    if (name === "Độ sáng ") {
+                    if (name === "Độ sáng") {
                       return [`${value} (${props.payload.time})`, name];
                     }
                     return [value, name];

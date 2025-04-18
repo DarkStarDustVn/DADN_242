@@ -8,6 +8,7 @@ import "../CSS_config/LoginPage.css";
 const LoginPage = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [rememberMe, setRememberMe] = React.useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -26,8 +27,17 @@ const LoginPage = () => {
           password,
         }
       );
-      console.log("Login response:", email, password);
       console.log("Login response:", response.data);
+      
+      // Lưu token và thông tin người dùng vào localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      
+      // Nếu người dùng chọn ghi nhớ đăng nhập, lưu trạng thái đăng nhập
+      if (rememberMe) {
+        localStorage.setItem("rememberMe", "true");
+      }
+      
       navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
@@ -50,35 +60,53 @@ const LoginPage = () => {
       }
     }
   };
-  // axios.interceptors.request.use(
-  //   (config) => {
-  //     const token = localStorage.getItem("token");
-  //     if (token) {
-  //       config.headers.Authorization = `Bearer ${token}`;
-  //     }
-  //     return config;
-  //   },
-  //   (error) => {
-  //     return Promise.reject(error);
-  //   }
-  // );
-  const handleLogout = () => {
+  axios.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  // const handleLogout = () => {
     // Clear user data from local storage
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  //   localStorage.removeItem("token");
+  //   localStorage.removeItem("user");
 
     // Redirect to the login page
-    navigate("/login");
-  };
+  //   navigate("/login");
+  // };
   const isLoggedIn = () => {
     const token = localStorage.getItem("token");
     return !!token;
   };
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (isLoggedIn()) {
-    // Redirect to the dashboard
-    navigate("/dashboard");
-  }
+  
+  // Kiểm tra đăng nhập khi component được tải
+  React.useEffect(() => {
+    // Kiểm tra nếu người dùng đã đăng nhập
+    if (isLoggedIn()) {
+      // Redirect to the dashboard
+      navigate("/dashboard");
+    }
+    
+    // Kiểm tra nếu có ghi nhớ đăng nhập
+    const remembered = localStorage.getItem("rememberMe");
+    if (remembered === "true") {
+      setRememberMe(true);
+      // Có thể tự động điền email từ lần đăng nhập trước nếu cần
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        const userData = JSON.parse(savedUser);
+        if (userData && userData.email) {
+          setEmail(userData.email);
+        }
+      }
+    }
+  }, [navigate]);
   
   return (
     <div className="flex h-screen w-full">
@@ -95,8 +123,8 @@ const LoginPage = () => {
         />
         <div className="absolute bottom-10 left-10 text-white">
           <h1 className="text-4xl font-bold mb-2">Smart Home</h1>
-          <p className="text-xl">
-            Control your home environment with our intuitive dashboard
+          <p className="text-xl"> {/*Control your home environment with our intuitive dashboard*/}
+            Điều khiển môi trường nhà của bạn với giao diện tiện lợi của chúng tôi
           </p>
         </div>
       </div>
@@ -107,7 +135,7 @@ const LoginPage = () => {
           <div className="text-center mb-10">
             <h1 className="text-4xl font-bold mb-2">Smart Home</h1>
             <p className="text-gray-400">
-              Welcome back! Please login to your account.
+              Chào mừng bạn trở lại! Vui lòng đăng nhập vào tài khoản của bạn.
             </p>
           </div>
 
@@ -117,7 +145,7 @@ const LoginPage = () => {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-400 mb-1"
               >
-                Email Address
+                E-mail
               </label>
               <input
                 type="email"
@@ -134,7 +162,7 @@ const LoginPage = () => {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-400 mb-1"
               >
-                Password
+                Mật Khẩu
               </label>
               <input
                 type="password"
@@ -152,12 +180,14 @@ const LoginPage = () => {
                   type="checkbox"
                   id="remember"
                   className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-700 rounded"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
                 />
                 <label
                   htmlFor="remember"
                   className="ml-2 block text-sm text-gray-400"
                 >
-                  Remember me
+                  Ghi Nhớ Đăng Nhập
                 </label>
               </div>
               <div className="text-sm">
@@ -165,7 +195,7 @@ const LoginPage = () => {
                   to="/forgot-password"
                   className="text-blue-500 hover:text-blue-400"
                 >
-                  Forgot your password?
+                  Quên Mật Khẩu?
                 </Link>
               </div>
             </div>
@@ -175,17 +205,17 @@ const LoginPage = () => {
                 type="submit"
                 className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
               >
-                Sign in
+                Đăng Nhập
               </button>
             </div>
 
             <div className="text-center text-sm text-gray-400">
-              Don't have an account?{" "}
+              Không có tài khoản{" "}
               <Link
                 to="/register"
                 className="text-blue-500 hover:text-blue-400"
               >
-                Sign up
+                Đăng ký
               </Link>
             </div>
           </form>

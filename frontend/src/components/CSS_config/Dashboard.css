@@ -1,3 +1,23 @@
+/* Import Orbitron font for cyberpunk style */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
+
+/* Add cyberpunk glow effects */
+.cyberpunk-glow {
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.7), 0 0 20px rgba(128, 0, 255, 0.5);
+}
+
+/* Logo and icon styles */
+.sidebar-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.75rem;
+}
+
+/* Ensure text and icons are vertically aligned */
+.flex.items-center {
+  align-items: center;
+}
+
 /* Dashboard specific styles */
 
 /* Custom scrollbar for the main content area */
@@ -48,5 +68,15 @@
   }
   100% {
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* Cyberpunk neon animation */
+@keyframes neonFlicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff00de, 0 0 35px #ff00de, 0 0 40px #ff00de;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
   }
 }
