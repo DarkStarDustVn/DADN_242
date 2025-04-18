@@ -10,6 +10,7 @@ const path = require("path");
 const connectDB = require("./src/config/database");
 const authRoutes = require("./src/routes/authRoutes")
 const userRoutes = require("./src/routes/useRoutes");
+const deviceRoutes = require("./src/routes/deviceRoutes")
 const feedRoutes = require("./src/routes/feedRoutes"); // route đã dùng để fetch dữ liệu từ Adafruit
 const feedHumidityRoutes = require("./src/routes/feedHumidityRoutes"); // route CRUD
 const feedLedRoutes = require("./src/routes/feedLedRoutes"); // route CRUD
@@ -30,6 +31,7 @@ app.use(cors());
 // API Creation
 app.use("/api/users", userRoutes);
 app.use('/api/auth', authRoutes);
+app.use("/api/devices", deviceRoutes);
 
 app.use("/feeds", feedRoutes); // API fetch dữ liệu từ Adafruit
 app.use("/api/humidity", feedHumidityRoutes); // API CRUD cho dữ liệu lấy từ Adafruit
