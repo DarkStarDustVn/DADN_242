@@ -5,8 +5,7 @@ import axios from 'axios';
 const DevicesPage = () => {
   const [devices, setDevices] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [offTimes, setOffTimes] = useState({});
- 
+
   // Load devices from DeviceManager
   useEffect(() => {
     const loadDevices = () => {
@@ -17,109 +16,77 @@ const DevicesPage = () => {
     loadDevices();
   }, [searchQuery]);
 
-  // Update off time counter every second for real-time display
-  useEffect(() => {
-    const timer = setInterval(() => {
-      // Force re-render to update displayed off times
-      setDevices([...deviceManager.getAllDevices()]);
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }, []);
-
-  // Load saved off times from localStorage and update if devices were off while page was closed
-  useEffect(() => {
-    const savedOffTimes = localStorage.getItem('deviceOffTimes');
-    if (savedOffTimes) {
-      const parsedOffTimes = JSON.parse(savedOffTimes);
-      
-      // Check for devices that were off when the page was closed
-      const updatedOffTimes = {...parsedOffTimes};
-      let hasUpdates = false;
-      
-      deviceManager.getAllDevices().forEach(device => {
-        // If device is still off and has a recorded start time, update the total off time
-        if (!device.status && parsedOffTimes[device.id] && parsedOffTimes[device.id].startTime) {
-          const currentTime = new Date().getTime();
-          const lastRecordedTime = parsedOffTimes[device.id].startTime;
-          const additionalOffTime = currentTime - lastRecordedTime;
-          
-          // Update the start time to current time to continue tracking
-          updatedOffTimes[device.id] = {
-            startTime: currentTime,
-            totalOffTime: (parsedOffTimes[device.id].totalOffTime || 0) + additionalOffTime
-          };
-          hasUpdates = true;
-        }
-      });
-      
-      // Save updates if any were made
-      if (hasUpdates) {
-        localStorage.setItem('deviceOffTimes', JSON.stringify(updatedOffTimes));
-      }
-      
-      setOffTimes(updatedOffTimes);
-    }
-  }, []);
-
   // Handle device toggle
-  const handleToggleDevice = (id) => {
+  const handleToggleDevice = async (id) => {
     const device = deviceManager.getDeviceById(id);
-    // Cập nhật cả trạng thái online/offline khi toggle thiết bị
-    const updatedDevice = deviceManager.updateDevice(id, { 
-      status: !device.status,
-      isOnline: !device.status // Thiết bị sẽ online khi bật, offline khi tắt
-    });
-    
-    // If turning off, record the time
-    if (device && device.status && !updatedDevice.status) {
-      const newOffTimes = {
-        ...offTimes,
-        [id]: {
-          startTime: new Date().getTime(),
-          totalOffTime: offTimes[id]?.totalOffTime || 0
-        }
-      };
-      setOffTimes(newOffTimes);
-      localStorage.setItem('deviceOffTimes', JSON.stringify(newOffTimes));
+    if (!device) {
+      console.error("Không tìm thấy thiết bị với ID:", id);
+      return;
     }
     
-    // If turning on, calculate the off duration
-    if (device && !device.status && updatedDevice.status) {
-      if (offTimes[id] && offTimes[id].startTime) {
-        const currentTime = new Date().getTime();
-        const offDuration = currentTime - offTimes[id].startTime;
-        const totalOffTime = (offTimes[id].totalOffTime || 0) + offDuration;
-        
-        const newOffTimes = {
-          ...offTimes,
-          [id]: {
-            startTime: null,
-            totalOffTime: totalOffTime
-          }
-        };
-        setOffTimes(newOffTimes);
-        localStorage.setItem('deviceOffTimes', JSON.stringify(newOffTimes));
+    const newStatus = !device.status;
+    
+    try {
+      // Cập nhật trạng thái thiết bị thông qua DeviceManager
+      const updatedDevice = await deviceManager.updateDevice(id, { 
+        status: newStatus,
+        isOnline: newStatus
+      });
+
+      if (!updatedDevice) {
+        console.error("Không thể cập nhật trạng thái thiết bị");
+        return;
       }
+
+      // Gửi dữ liệu đến Adafruit IO
+      const valueToSend = newStatus ? 1 : 0;
+      const username = import.meta.env.VITE_AIO_USERNAME;
+      let feedKey = '';
+      
+      if (device.type === 'led') {
+        feedKey = 'bbc-led';
+      } else if (device.type === 'state') {
+        feedKey = 'bbc-state';
+      } else if (device.type === 'light') {
+        feedKey = 'bbc-led';
+      }
+
+      if (feedKey) {
+        const aioKey = import.meta.env.VITE_AIO_KEY;
+        const url = `https://io.adafruit.com/api/v2/${username}/feeds/${feedKey}/data`;
+        
+        try {
+          const response = await axios.post(url, 
+            { value: valueToSend.toString() },
+            { headers: { 'X-AIO-Key': aioKey } }
+          );
+          console.log('Data sent successfully to', feedKey, ':', response.data);
+        } catch (error) {
+          console.error('Error sending data to', feedKey, ':', error);
+          console.error('Error details:', error.response ? error.response.data : 'No response data');
+        }
+      }
+
+      // Cập nhật danh sách thiết bị trong state
+      setDevices([...deviceManager.getAllDevices()]);
+    } catch (error) {
+      console.error('Error toggling device:', error);
     }
-    
-    setDevices([...deviceManager.getAllDevices()]); // Update state with fresh data
   };
+
+
 
   // Handle device deletion
   const handleDeleteDevice = (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa thiết bị này?')) {
+      // Xóa thiết bị từ deviceManager - đã được cập nhật để xóa dữ liệu trong localStorage
+      console.log("Device:",deviceManager.getDeviceById(id))
       deviceManager.deleteDevice(id);
+      setDevices([...deviceManager.getAllDevices()]);
       
-      // Also remove device from offTimes tracking
-      const newOffTimes = {...offTimes};
-      delete newOffTimes[id];
-      setOffTimes(newOffTimes);
-      localStorage.setItem('deviceOffTimes', JSON.stringify(newOffTimes));
-      
-      setDevices([...deviceManager.getAllDevices()]); // Update state with fresh data
     }
   };
+
 
   // State for modal and form data
   const [showModal, setShowModal] = useState(false);
@@ -149,7 +116,7 @@ const DevicesPage = () => {
   const handleSubmitDevice = (e) => {
     e.preventDefault();
     if (formData.name.trim()) {
-      const newDevice = deviceManager.addDevice(formData);
+      deviceManager.addDevice(formData);
       setDevices([...deviceManager.getAllDevices()]); // Update state with fresh data
       setShowModal(false);
       // Reset form data
@@ -166,21 +133,6 @@ const DevicesPage = () => {
   // Close modal
   const handleCloseModal = () => {
     setShowModal(false);
-  };
-
-  // Format off time to display in minutes, hours, or days
-  const formatOffTime = (milliseconds) => {
-    const minutes = Math.floor(milliseconds / (1000 * 60));
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    
-    if (days > 0) {
-      return `${days} ngày ${hours % 24} giờ`;
-    } else if (hours > 0) {
-      return `${hours} giờ ${minutes % 60} phút`;
-    } else {
-      return `${minutes} phút`;
-    }
   };
 
   return (
@@ -252,10 +204,12 @@ const DevicesPage = () => {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
+                  <option value="led">Đèn LED</option>
                   <option value="light">Đèn</option>
                   <option value="ac">Điều hòa</option>
                   <option value="fan">Quạt</option>
                   <option value="tv">TV</option>
+                  <option value="state">Công tắc State</option>
                   <option value="other">Khác</option>
                 </select>
               </div>
@@ -291,7 +245,13 @@ const DevicesPage = () => {
           </div>
         </div>
       )}
-      
+      {/* <div>
+        <h2 className="text-2xl font-semibold mb-4">Danh sách thiết bị</h2>
+        {console.log(devices)}
+        { devices.map(device => (
+          console.log('Device ID and name:', device._id, ':' , device.name)
+        ) )  }
+      </div> */}
       {/* Devices Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {devices.length === 0 ? (
@@ -300,19 +260,19 @@ const DevicesPage = () => {
           </div>
         ) : (
           devices.map(device => (
-            <div key={device.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div key={device._id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                 <h4 className="font-semibold">{device.name}</h4>
                 <div className="relative inline-block w-12 align-middle select-none">
                   <input 
                     type="checkbox" 
-                    name={`toggle-${device.id}`} 
-                    id={`toggle-${device.id}`} 
+                    name={`toggle-${device._id}`} 
+                    id={`toggle-${device._id}`} 
                     className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-300 appearance-none cursor-pointer transition-transform duration-200 ease-in-out translate-x-0 checked:translate-x-6 checked:border-green-500"
                     checked={device.status}
-                    onChange={() => handleToggleDevice(device.id)}
+                    onChange={() => handleToggleDevice(device._id)}
                   />
-                  <label htmlFor={`toggle-${device.id}`} className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                  <label htmlFor={`toggle-${device._id}`} className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
                 </div>
               </div>
               <div className="p-4">
@@ -336,9 +296,7 @@ const DevicesPage = () => {
                     <p className="font-medium">
                       {device.status 
                         ? 'Đang hoạt động'
-                        : offTimes[device.id]?.startTime
-                          ? 'Đã tắt ' + formatOffTime(new Date().getTime() - offTimes[device.id].startTime) + ' trước'
-                          : 'Đã tắt'
+                        : 'Đã tắt'
                       }
                     </p>
                   </div>
@@ -351,7 +309,7 @@ const DevicesPage = () => {
                   </button>
                   <button 
                     className="text-red-600 hover:text-red-800"
-                    onClick={() => handleDeleteDevice(device.id)}
+                    onClick={() => handleDeleteDevice(device._id)}
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>

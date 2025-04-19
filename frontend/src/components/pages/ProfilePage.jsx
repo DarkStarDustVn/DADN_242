@@ -20,6 +20,8 @@ const ProfilePage = () => {
         setLoading(true);
         // Lấy token từ localStorage
         const token = localStorage.getItem('token');
+        //console.log('Token:', localStorage); // Log token để kiểm tra
+        //console.log('Token:', token); // Log token để kiểm tra
         if (!token) {
           throw new Error('Không tìm thấy token đăng nhập');
         }
@@ -36,16 +38,18 @@ const ProfilePage = () => {
           }
         }
         
-        // Gọi API với token xác thực
-        const response = await axios.get('http://localhost:8000/api/users/', {
+        // Gọi API với token xác thực và thêm token vào đường dẫn URL
+        const response = await axios.get(`http://localhost:8000/api/users/${token}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
+        console.log('response data:', response.data); // Log dữ liệu người dùng trả vến từ API
         
         // Cập nhật state với dữ liệu người dùng
-        if (response.data && response.data.users && response.data.users.length > 0) {
-          const user = response.data.users[0]; // Lấy người dùng đầu tiên từ danh sách
+        if (response.data) {
+          const user = response.data; // Lấy người dùng đầu tiên từ danh sách
+          console.log('User data:', user); // Log dữ liệu người dùng trả vến từ API
           setUserData(user);
           
           // Nếu chưa có ảnh đại diện từ localStorage, kiểm tra từ API
@@ -158,7 +162,7 @@ const ProfilePage = () => {
         throw new Error('Không tìm thấy token đăng nhập');
       }
 
-      const response = await axios.put('http://localhost:8000/api/users', formData, {
+      const response = await axios.put(`http://localhost:8000/api/users/${token}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
