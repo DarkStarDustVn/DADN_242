@@ -5,7 +5,7 @@ import axios from 'axios';
 const DevicesPage = () => {
   const [devices, setDevices] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-
+  
   // Load devices from DeviceManager
   useEffect(() => {
     const loadDevices = () => {
@@ -76,6 +76,37 @@ const DevicesPage = () => {
 
 
 
+  // Handle fan speed change
+  const handleFanSpeedChange = async (id, speed) => {
+    try {
+      // Update device in DeviceManager
+      await deviceManager.updateDevice(id, { speed });
+      
+      // Send data to Adafruit IO
+      const username = import.meta.env.VITE_AIO_USERNAME;
+      const aioKey = import.meta.env.VITE_AIO_KEY;
+      const url = `https://io.adafruit.com/api/v2/${username}/feeds/bbc-fan/data`;
+      
+      try {
+        const response = await axios.post(url, 
+          { value: speed.toString() },
+          { headers: { 'X-AIO-Key': aioKey } }
+        );
+        console.log('Fan speed updated:', response.data);
+      } catch (error) {
+        console.error('Error updating fan speed:', error);
+        console.error('Error details:', error.response ? error.response.data : 'No response data');
+      }
+      
+      // Update devices list
+      setDevices([...deviceManager.getAllDevices()]);
+    } catch (error) {
+      console.error('Error changing fan speed:', error);
+    }
+  };
+
+
+
   // Handle device deletion
   const handleDeleteDevice = (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa thiết bị này?')) {
@@ -95,7 +126,8 @@ const DevicesPage = () => {
     type: 'light',
     status: false,
     isOnline: true,
-    power: 0
+    power: 0,
+    speed: 50 // Default fan speed
   });
 
   // Handle form input changes
@@ -148,21 +180,53 @@ const DevicesPage = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            
             <div className="absolute left-3 top-2.5">
               <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
             </div>
           </div>
-          <button 
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center"
-            onClick={handleAddDevice}
-          >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Thêm thiết bị mới
-          </button>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">State Control:</span>
+              <div className="relative inline-block w-12 align-middle select-none">
+                <input 
+                  type="checkbox" 
+                  id="toggle-state"
+                  className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-300 appearance-none cursor-pointer transition-transform duration-200 ease-in-out translate-x-0 checked:translate-x-6 checked:border-green-500"
+                  onChange={async (e) => {
+                    const valueToSend = e.target.checked ? 1 : 0;
+                    const username = import.meta.env.VITE_AIO_USERNAME;
+                    const aioKey = import.meta.env.VITE_AIO_KEY;
+                    const url = `https://io.adafruit.com/api/v2/${username}/feeds/bbc-state/data`;
+                    
+                    try {
+                      const response = await axios.post(url, 
+                        { value: valueToSend.toString() },
+                        { headers: { 'X-AIO-Key': aioKey } }
+                      );
+                      console.log('State control updated:', response.data);
+                    } catch (error) {
+                      console.error('Error updating state:', error);
+                    }
+                  }}
+                />
+                <label htmlFor="toggle-state" className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+              </div>
+            </div>
+            
+            <button 
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center"
+              onClick={handleAddDevice}
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Thêm thiết bị mới
+            </button>
+          </div>
         </div>
       </div>
       
@@ -204,12 +268,10 @@ const DevicesPage = () => {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="led">Đèn LED</option>
                   <option value="light">Đèn</option>
                   <option value="ac">Điều hòa</option>
                   <option value="fan">Quạt</option>
                   <option value="tv">TV</option>
-                  <option value="state">Công tắc State</option>
                   <option value="other">Khác</option>
                 </select>
               </div>
@@ -287,6 +349,31 @@ const DevicesPage = () => {
                       <p className="font-medium">{device.temperature}°C</p>
                     </div>
                   )}
+                  
+                  {/* Fan speed control */}
+                  {device.type === 'fan' && device.status && (
+                    <div className="col-span-2 bg-gray-100 p-3 rounded">
+                      <div className="flex justify-between items-center mb-1">
+                        <p className="text-xs text-gray-500">Tốc độ quạt</p>
+                        <p className="text-xs font-medium">{device.speed || 0}%</p>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value={device.speed || 0}
+                        onChange={(e) => handleFanSpeedChange(device._id, parseInt(e.target.value))}
+                        className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>0%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                      </div>
+                    </div>
+                  )}
+                  
                   <div className="bg-gray-100 p-2 rounded">
                     <p className="text-xs text-gray-500">Power</p>
                     <p className="font-medium">{device.power}W</p>
