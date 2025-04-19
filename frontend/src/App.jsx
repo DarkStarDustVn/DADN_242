@@ -61,9 +61,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-      <HelmetProvider>
-        <RouterProvider router={router} />
-      </HelmetProvider>
+    <HelmetProvider>
+      <RouterProvider router={router} />
+    </HelmetProvider>
   );
 }
 

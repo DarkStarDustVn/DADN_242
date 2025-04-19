@@ -6,6 +6,7 @@ const {
     fetchBbcFanData,
     fetchBbcIrData,
     fetchBbcPirData,
+    fetchBbcStateData,
 
 } = require("../controllers/feedController");
 
@@ -17,5 +18,6 @@ router.get("/temp", fetchBbcTempData);
 router.get("/fan", fetchBbcFanData);
 router.get("/ir", fetchBbcIrData);
 router.get("/pir", fetchBbcPirData);
+router.get("/state", fetchBbcStateData);
 
 module.exports = router;

@@ -3,41 +3,41 @@ import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const UsagePage = () => {
-    const [TemperatureData, setTemperatureData] = useState([]);
-    const [HumidityData, setHumidityData] = useState([]);
-    const [LedBrightnessData, setLedBrightnessData] = useState([]);
+  const [TemperatureData, setTemperatureData] = useState([]);
+  const [HumidityData, setHumidityData] = useState([]);
+  const [LedBrightnessData, setLedBrightnessData] = useState([]);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const temperature_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-temp/data`);
-                setTemperatureData(temperature_data.data.map((data) => ({
-                    temp_value : data.value,
-                    date : new Date(data.created_at).toLocaleDateString(),
-                })));
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const temperature_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-temp/data`);
+        setTemperatureData(temperature_data.data.map((data) => ({
+          temp_value: data.value,
+          date: new Date(data.created_at).toLocaleDateString(),
+        })));
 
-                const humidity_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-humidity/data`);
-                setHumidityData(humidity_data.data.map((data) => ({
-                    humidity_value : data.value,
-                    date : new Date(data.created_at).toLocaleDateString(),
-                })));
+        const humidity_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-humidity/data`);
+        setHumidityData(humidity_data.data.map((data) => ({
+          humidity_value: data.value,
+          date: new Date(data.created_at).toLocaleDateString(),
+        })));
 
-                const Led_brightness_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-ir/data`);
-                setLedBrightnessData(Led_brightness_data.data.map((data) => ({
-                    led_brightness_value : data.value,
-                    date : new Date(data.created_at).toLocaleDateString(),
-                    time : new Date(data.created_at).toLocaleTimeString(),
-                })));
-                
-                
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        }
-        
-        fetchData();
-    }, []); // Empty dependency array means this effect runs once on component mount
-    console.log(TemperatureData)
+        const Led_brightness_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-ir/data`);
+        setLedBrightnessData(Led_brightness_data.data.map((data) => ({
+          led_brightness_value: data.value,
+          date: new Date(data.created_at).toLocaleDateString(),
+          time: new Date(data.created_at).toLocaleTimeString(),
+        })));
+
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }, []); // Empty dependency array means this effect runs once on component mount
+  console.log(TemperatureData)
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -67,7 +67,7 @@ const UsagePage = () => {
           </button>
         </div>
       </div>
-      
+
       {/* Usage Charts */}
       <div className="grid grid-cols-1 gap-6 mb-6">
         {/* Temperature Chart */}
@@ -85,12 +85,12 @@ const UsagePage = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="temp_value" 
+                  <Line
+                    type="monotone"
+                    dataKey="temp_value"
                     name="Nhiệt độ (°C)"
-                    stroke="#ff7c58" 
-                    activeDot={{ r: 8 }} 
+                    stroke="#ff7c58"
+                    activeDot={{ r: 8 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -99,7 +99,7 @@ const UsagePage = () => {
             )}
           </div>
         </div>
-        
+
         {/* Humidity Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-4">Độ ẩm</h4>
@@ -115,12 +115,12 @@ const UsagePage = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="humidity_value" 
+                  <Line
+                    type="monotone"
+                    dataKey="humidity_value"
                     name="Độ ẩm (%)"
-                    stroke="#82ca9d" 
-                    activeDot={{ r: 8 }} 
+                    stroke="#82ca9d"
+                    activeDot={{ r: 8 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -129,7 +129,7 @@ const UsagePage = () => {
             )}
           </div>
         </div>
-        
+
         {/* LED Brightness Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-4">Độ sáng</h4>
@@ -142,15 +142,15 @@ const UsagePage = () => {
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
-                  <YAxis dataKey= "led_brightness_value"/>
+                  <YAxis dataKey="led_brightness_value" />
                   <Tooltip />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="led_brightness_value" 
+                  <Line
+                    type="monotone"
+                    dataKey="led_brightness_value"
                     name="Độ sáng"
-                    stroke="#6e58ff" 
-                    activeDot={{ r: 8 }} 
+                    stroke="#6e58ff"
+                    activeDot={{ r: 8 }}
                   />
                   <Tooltip formatter={(value, name, props) => {
                     if (name === "Độ sáng") {
@@ -166,7 +166,7 @@ const UsagePage = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Usage Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {/* Total Energy Card */}
@@ -175,14 +175,14 @@ const UsagePage = () => {
           <p className="text-3xl font-bold text-blue-600">245.8 kWh</p>
           <p className="text-sm text-gray-500">+12% so với kỳ trước</p>
         </div>
-        
+
         {/* Peak Usage Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-2">Giờ cao điểm</h4>
           <p className="text-3xl font-bold text-orange-500">18:00 - 20:00</p>
           <p className="text-sm text-gray-500">Trung bình 4.2 kWh/giờ</p>
         </div>
-        
+
         {/* Estimated Cost Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-2">Chi phí ước tính</h4>
@@ -190,7 +190,7 @@ const UsagePage = () => {
           <p className="text-sm text-gray-500">Dựa trên giá điện hiện tại</p>
         </div>
       </div>
-      
+
       {/* Device Usage Table */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="p-6 border-b border-gray-200">
