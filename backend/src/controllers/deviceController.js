@@ -59,13 +59,25 @@ const getDevices = async (req, res) => {
 // [POST] /api/devices
 const createDevice = async (req, res) => {
   try {
-    const { name, type, status, isOnline, power } = req.body;
+    const { name, type, status, isOnline, power, speed } = req.body;
+
+    // Nếu là fan thì speed là bắt buộc
+    if (type === 'fan' && (speed === undefined || speed === null)) {
+      return res.status(400).json({ message: "Thiết bị quạt cần có tốc độ (speed)" });
+    }
+
+    // Nếu không phải fan mà có speed thì từ chối
+    if (type !== 'fan' && speed !== undefined) {
+      return res.status(400).json({ message: "Chỉ thiết bị quạt mới được khai báo speed" });
+    }
+
     const newDevice = await Device.create({
       name,
       type,
       status,
       isOnline,
       power,
+      ...(type === 'fan' && { speed }) // chỉ thêm speed nếu là fan)
     });
     res.status(201).json(newDevice);
   } catch (err) {
@@ -81,6 +93,25 @@ const updateDevice = async (req, res) => {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "ID thiết bị không hợp lệ" });
+    }
+
+     // Lấy dữ liệu thiết bị gốc để xác định type nếu client không truyền
+     const existingDevice = await Device.findById(id);
+     if (!existingDevice) {
+       return res.status(404).json({ message: "Không tìm thấy thiết bị" });
+     }
+ 
+     const type = req.body.type || existingDevice.type;
+     const speed = req.body.speed;
+
+     // Nếu đang cập nhật sang type fan → speed bắt buộc
+     if (type === 'fan' && (speed === undefined || speed === null)) {
+      return res.status(400).json({ message: "Quạt cần có tốc độ (speed)" });
+    }
+
+    // Nếu không phải fan mà có speed thì từ chối
+    if (type !== 'fan' && speed !== undefined) {
+      return res.status(400).json({ message: "Chỉ quạt mới được có speed" });
     }
     const updated = await Device.findByIdAndUpdate(id, req.body, {
       new: true,

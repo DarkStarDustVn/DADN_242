@@ -10,7 +10,12 @@ const deviceSchema = new mongoose.Schema(
     },
     status: { type: Boolean, default: false },
     isOnline: { type: Boolean, default: true },
-    power: { type: Number, default: 0 },
+    power: { type: Number, default: 0 }, // công suất (W)
+    speed: {
+      type: Number,
+      min: 0,
+      max: 100,
+    },
   },
   {
     timestamps: true,
