@@ -5,8 +5,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 const DEVICE_POWER_WATT = {
   led: 0.8,
   fan: 0.66,
-  ir: 0.02,
-  pir: 0.05,
+  // ir: 0.02,
+  // pir: 0.05,
 };
 
 const HomePage = () => {
@@ -16,6 +16,7 @@ const HomePage = () => {
   const [latestIr, setLatestIr] = useState(null);
   const [latestEnergy, setLatestEnergy] = useState(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const interval = setInterval(fetchData, 1000);

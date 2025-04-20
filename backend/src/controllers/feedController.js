@@ -30,7 +30,7 @@ const fetchAndStoreFeed = async (feedName, Model) => {
             // Kiểm tra nếu dữ liệu đã tồn tại
             const existingDoc = await Model.findOne({ _id: item.id });
             if (!existingDoc) {
-                const doc = new Model({
+                const docData = new Model({
                     ...item,
                     _id: item.id,  // Dùng id của Adafruit làm _id
                     feedName: feedName,
@@ -43,7 +43,7 @@ const fetchAndStoreFeed = async (feedName, Model) => {
 
                 docData.created_at = formattedVNDate;
                 docData.created_epoch = Math.floor(vnDate.getTime() / 1000);
-                // const doc = new Model(docData);
+                const doc = new Model(docData);
                 await doc.save();
                 console.log(`${feedName}: Inserted new data`);
                 return { feedName, inserted: true };
