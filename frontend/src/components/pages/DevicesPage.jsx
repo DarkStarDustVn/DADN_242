@@ -27,11 +27,10 @@ const DevicesPage = () => {
     const newStatus = !device.status;
     
     try {
-      // Cập nhật trạng thái thiết bị thông qua DeviceManager
-      const updatedDevice = await deviceManager.updateDevice(id, { 
-        status: newStatus,
-        isOnline: newStatus
-      });
+       const updatedDevice = await deviceManager.updateDevice(id, { 
+          status: newStatus,
+          isOnline: newStatus
+        });
 
       if (!updatedDevice) {
         console.error("Không thể cập nhật trạng thái thiết bị");
@@ -77,31 +76,49 @@ const DevicesPage = () => {
 
 
   // Handle fan speed change
-  const handleFanSpeedChange = async (id, speed) => {
+  const handleFanSpeedChange = async (id, speed, status = null) => {
     try {
+      const device = deviceManager.getDeviceById(id);
+      if (!device) {
+        console.error("Không tìm thấy thiết bị với ID:", id);
+        return;
+      }
+      
+      // Prepare update data
+      const updateData = { speed };
+      
+      // If status is provided, update it too
+      if (status !== null) {
+        updateData.status = status;
+        updateData.isOnline = status;
+      }
+      
       // Update device in DeviceManager
-      await deviceManager.updateDevice(id, { speed });
+      await deviceManager.updateDevice(id, updateData);
       
       // Send data to Adafruit IO
       const username = import.meta.env.VITE_AIO_USERNAME;
       const aioKey = import.meta.env.VITE_AIO_KEY;
       const url = `https://io.adafruit.com/api/v2/${username}/feeds/bbc-fan/data`;
       
+      // If turning off, send 0, otherwise send the speed
+      const valueToSend = (status === false) ? "0" : speed.toString();
+      
       try {
         const response = await axios.post(url, 
-          { value: speed.toString() },
+          { value: valueToSend },
           { headers: { 'X-AIO-Key': aioKey } }
         );
-        console.log('Fan speed updated:', response.data);
+        console.log('Fan updated:', response.data);
       } catch (error) {
-        console.error('Error updating fan speed:', error);
+        console.error('Error updating fan:', error);
         console.error('Error details:', error.response ? error.response.data : 'No response data');
       }
       
       // Update devices list
       setDevices([...deviceManager.getAllDevices()]);
     } catch (error) {
-      console.error('Error changing fan speed:', error);
+      console.error('Error changing fan settings:', error);
     }
   };
 
@@ -332,7 +349,17 @@ const DevicesPage = () => {
                     id={`toggle-${device._id}`} 
                     className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-300 appearance-none cursor-pointer transition-transform duration-200 ease-in-out translate-x-0 checked:translate-x-6 checked:border-green-500"
                     checked={device.status}
-                    onChange={() => handleToggleDevice(device._id)}
+                    onChange={() => {
+                      if (device.type === 'fan') {
+                        // For fans, use handleFanSpeedChange with current speed or 0 if turning off
+                        const newStatus = !device.status;
+                        const newSpeed = newStatus ? (device.speed || 50) : 0;
+                        handleFanSpeedChange(device._id, newSpeed, newStatus);
+                      } else {
+                        // For other devices, use the regular toggle function
+                        handleToggleDevice(device._id);
+                      }
+                    }}
                   />
                   <label htmlFor={`toggle-${device._id}`} className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
                 </div>
@@ -363,7 +390,7 @@ const DevicesPage = () => {
                         max="100"
                         step="1"
                         value={device.speed || 0}
-                        onChange={(e) => handleFanSpeedChange(device._id, parseInt(e.target.value))}
+                        onChange={(e) => handleFanSpeedChange(device._id, parseInt(e.target.value), true)}
                         className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer"
                       />
                       <div className="flex justify-between text-xs text-gray-500 mt-1">
