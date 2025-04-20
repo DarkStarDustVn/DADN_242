@@ -6,7 +6,7 @@ const deviceSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["light", "ac", "fan", "tv", "other"],
+      enum: ["light", "ac", "fan", "tv", "other", "state"],
     },
     status: { type: Boolean, default: false },
     isOnline: { type: Boolean, default: true },

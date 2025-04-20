@@ -128,7 +128,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-
+        
         {/* Brightness Card */}
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
           <div className="flex items-center">
@@ -145,9 +145,7 @@ const HomePage = () => {
         </div>
       </div>
 
-
-
-      {/* Chart Section */}
+      {/* Data Visualization Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h3 className="text-lg font-semibold mb-4">Energy Consumption Last 30 Days</h3>
         <div className="bg-violet-100 rounded-lg" style={{ width: '100%', height: 320 }}>

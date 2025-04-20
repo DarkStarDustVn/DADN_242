@@ -89,8 +89,8 @@ const UsagePage = () => {
                     type="monotone"
                     dataKey="temp_value"
                     name="Nhiệt độ (°C)"
-                    stroke="#ff7c58"
-                    activeDot={{ r: 8 }}
+                    stroke="#8884d8" 
+                    activeDot={{ r: 8 }} 
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -149,8 +149,8 @@ const UsagePage = () => {
                     type="monotone"
                     dataKey="led_brightness_value"
                     name="Độ sáng"
-                    stroke="#6e58ff"
-                    activeDot={{ r: 8 }}
+                    stroke="#ffc658" 
+                    activeDot={{ r: 8 }} 
                   />
                   <Tooltip formatter={(value, name, props) => {
                     if (name === "Độ sáng") {

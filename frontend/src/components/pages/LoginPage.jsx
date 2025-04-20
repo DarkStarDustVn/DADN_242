@@ -27,12 +27,12 @@ const LoginPage = () => {
           password,
         }
       );
-      console.log("Login response:", response.data);
-      
+      // console.log("Login response:", response.data);
+      // console.log("Token:", response.data.user._id);
       // Lưu token và thông tin người dùng vào localStorage
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", response.data.user._id);
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      
+      // console.log("localStorage:", localStorage);
       // Nếu người dùng chọn ghi nhớ đăng nhập, lưu trạng thái đăng nhập
       if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
@@ -63,6 +63,7 @@ const LoginPage = () => {
   axios.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem("token");
+      console.log("Token:", token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -210,7 +211,7 @@ const LoginPage = () => {
             </div>
 
             <div className="text-center text-sm text-gray-400">
-              Không có tài khoản{" "}
+              Không có tài khoản?{"  "}
               <Link
                 to="/register"
                 className="text-blue-500 hover:text-blue-400"
