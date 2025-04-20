@@ -95,6 +95,15 @@ const updateDevice = async (req, res) => {
       return res.status(400).json({ message: "ID thiết bị không hợp lệ" });
     }
 
+     // Lấy dữ liệu thiết bị gốc để xác định type nếu client không truyền
+     const existingDevice = await Device.findById(id);
+     if (!existingDevice) {
+       return res.status(404).json({ message: "Không tìm thấy thiết bị" });
+     }
+ 
+     const type = req.body.type || existingDevice.type;
+     const speed = req.body.speed;
+
      // Nếu đang cập nhật sang type fan → speed bắt buộc
      if (type === 'fan' && (speed === undefined || speed === null)) {
       return res.status(400).json({ message: "Quạt cần có tốc độ (speed)" });

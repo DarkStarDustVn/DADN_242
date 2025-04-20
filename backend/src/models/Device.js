@@ -15,17 +15,6 @@ const deviceSchema = new mongoose.Schema(
       type: Number,
       min: 0,
       max: 100,
-      validate: {
-        validator: function (value) {
-          // Nếu type là 'fan' thì speed là bắt buộc
-          if (this.type === "fan") return value != null;
-          // Nếu không phải fan thì speed nên undefined hoặc null
-          return value == null;
-        },
-        message: function (props) {
-          return `Thuộc tính 'speed' chỉ áp dụng với thiết bị quạt (fan).`;
-        },
-      },
     },
   },
   {
