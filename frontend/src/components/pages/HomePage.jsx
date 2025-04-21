@@ -6,8 +6,8 @@ import DeviceStatusList from '../../utils/DeviceStatusList.jsx';
 const DEVICE_POWER_WATT = {
   led: 0.8,
   fan: 0.66,
-  ir: 0.02,
-  pir: 0.05,
+  // ir: 0.02,
+  // pir: 0.05,
 };
 
 const HomePage = () => {
@@ -27,7 +27,7 @@ const HomePage = () => {
   async function fetchData() {
     try {
       // Fetch device usage
-      const endpoints = ['led', 'fan', 'ir', 'pir'];
+      const endpoints = ['led', 'fan'];
       const responses = await Promise.all(
         endpoints.map(e => axios.get(`http://localhost:8000/api/${e}`))
       );
