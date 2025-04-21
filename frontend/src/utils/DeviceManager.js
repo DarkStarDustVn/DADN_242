@@ -52,7 +52,6 @@ class DeviceManager {
       
       let devicesData = [];
       if (response.data && Array.isArray(response.data)) {
-        console.log('All devices fetched from API:', response.data);
         devicesData = response.data;
       } else if (response.data && response.data.devices && Array.isArray(response.data.devices)) {
         // Handle case where API returns { devices: [...] } format
@@ -61,8 +60,6 @@ class DeviceManager {
       
       // Add each device to the existing array
       devicesData.forEach(device => this.devices.push(device));
-      console.log('All devices fetched from API:', this.devices);
-      
       return this.devices;
 
     } catch (error) {
@@ -86,28 +83,23 @@ class DeviceManager {
    */
   async addDevice(device) {
     try {
+      // Create a new device object without the speed property
+      const deviceToAdd = { ...device };
+      
+      // Only include speed if it's a fan device
+      if (device.type !== 'fan' && 'speed' in deviceToAdd) {
+        delete deviceToAdd.speed;
+      }
+      
       // Create device on server first
-        const response = await axios.post(`${this.apiBaseUrl}/devices`, device);
-        const serverDevice = response.data;
-        this.devices.push(serverDevice);
-        return serverDevice;
+      const response = await axios.post(`${this.apiBaseUrl}/devices`, deviceToAdd);
+      const serverDevice = response.data;
+      this.devices.push(serverDevice);
+      return serverDevice;
 
     } catch (error) {
-      console.error('Error adding device to server:', error);
-      
-      // Fallback to local device creation
-      const newId = this.devices.length > 0 
-        ? Math.max(...this.devices.map(d => d.id)) + 1 
-        : 1;
-      
-      const newDevice = {
-        ...device,
-        id: newId,
-        lastActive: 'Just now'
-      };
-      
-      this.devices.push(newDevice);
-      return newDevice;
+      console.error('Error adding device on server:', error);
+      // Fallback code is commented out
     }
   }
 
@@ -119,14 +111,10 @@ class DeviceManager {
    */
   async updateDevice(id, updates) {
     const index = this.devices.findIndex(device => device._id === id);
-    // const device_id = id;
-    // console.log('Updating device with ID:', device_id);
-    // console.log('Updating device with index pos:', index);
     if (index === -1) return null;
     
     try {
         const response = await axios.put(`${this.apiBaseUrl}/devices/${id}`, updates);
-        console.log('Device updated on server:', response.data);
         if (response.data) {
           // Use the device returned from the server
           const serverDevice = response.data;
@@ -139,42 +127,6 @@ class DeviceManager {
       console.error('Error updating device on server:', error);
     }
   }
-
-  // /**
-  //  * Toggle device status (on/off)
-  //  * @param {number} id - Device ID
-  //  * @returns {Promise<Object|null>} Promise resolving to updated device or null if not found
-  //  */
-  // async toggleDeviceStatus(id) {
-  //   const device = this.getDeviceById(id);
-  //   if (!device) return null;
-    
-  //   try {
-          // Update device status on Adafruit IO if feed key is available
-  //     if (device.feedKey) {
-  //       const newStatus = !device.status;
-  //       const value = newStatus ? '1' : '0';
-        
-           // Send to Adafruit IO
-  //       const url = `${this.adafruitBaseUrl}/${this.username}/feeds/${device.feedKey}/data`;
-  //       await axios.post(url, {
-  //         value: value
-  //       }, {
-  //         headers: {
-  //           'X-AIO-Key': device.aioKey || localStorage.getItem('adafruitKey'),
-  //           'Content-Type': 'application/json'
-  //         }
-  //       });
-  //     }
-      
-      // Then update in our system
-  //     return await this.updateDevice(id, { status: !device.status });
-  //   } catch (error) {
-  //     console.error('Error toggling device status:', error);
-      // Fallback to local toggle
-  //     return this.updateDevice(id, { status: !device.status });
-  //   }
-  // }
 
   /**
    * Delete a device
@@ -194,8 +146,6 @@ class DeviceManager {
       this.devices.splice(index, 1);
       return true;
     } catch (error) {
-      console.error('Error deleting device from server:', error);
-      
       // Fallback to local deletion
       this.devices.splice(index, 1);
       return true;

@@ -5,7 +5,6 @@ import axios from 'axios';
 const DevicesPage = () => {
   const [devices, setDevices] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  // State for edit modal
   const [showEditModal, setShowEditModal] = useState(false);
   const [editFormData, setEditFormData] = useState({
     _id: '',
@@ -65,13 +64,6 @@ const DevicesPage = () => {
           speed: parseInt(editFormData.speed) || 0
         });
       }
-      // await deviceManager.updateDevice(editFormData._id, {
-      //   name: editFormData.name,
-      //   type: editFormData.type,
-      //   power: parseInt(editFormData.power) || 0,
-      //   speed: parseInt(editFormData.speed) || 0
-      // });
-      
       // Send updated data to API
       const username = import.meta.env.VITE_AIO_USERNAME;
       const aioKey = import.meta.env.VITE_AIO_KEY;
@@ -115,11 +107,6 @@ const DevicesPage = () => {
   // Handle device toggle
   const handleToggleDevice = async (id) => {
     const device = deviceManager.getDeviceById(id);
-    if (!device) {
-      console.error("Không tìm thấy thiết bị với ID:", id);
-      return;
-    }
-    
     const newStatus = !device.status;
     
     try {
@@ -128,23 +115,21 @@ const DevicesPage = () => {
           isOnline: newStatus
         });
 
-      if (!updatedDevice) {
-        console.error("Không thể cập nhật trạng thái thiết bị");
-        return;
-      }
+      // if (!updatedDevice) {
+      //   console.error("Không thể cập nhật trạng thái thiết bị");
+      //   return;
+      // }
 
       // Gửi dữ liệu đến Adafruit IO
       const valueToSend = newStatus ? 1 : 0;
       const username = import.meta.env.VITE_AIO_USERNAME;
       let feedKey = '';
       
-      if (device.type === 'led') {
+      if (device.type === 'light') {
         feedKey = 'bbc-led';
       } else if (device.type === 'state') {
         feedKey = 'bbc-state';
-      } else if (device.type === 'light') {
-        feedKey = 'bbc-led';
-      }
+      } 
 
       if (feedKey) {
         const aioKey = import.meta.env.VITE_AIO_KEY;
@@ -155,7 +140,7 @@ const DevicesPage = () => {
             { value: valueToSend.toString() },
             { headers: { 'X-AIO-Key': aioKey } }
           );
-          console.log('Data sent successfully to', feedKey, ':', response.data);
+ 
         } catch (error) {
           console.error('Error sending data to', feedKey, ':', error);
           console.error('Error details:', error.response ? error.response.data : 'No response data');
@@ -205,7 +190,7 @@ const DevicesPage = () => {
           { value: valueToSend },
           { headers: { 'X-AIO-Key': aioKey } }
         );
-        console.log('Fan updated:', response.data);
+
       } catch (error) {
         console.error('Error updating fan:', error);
         console.error('Error details:', error.response ? error.response.data : 'No response data');
@@ -319,7 +304,7 @@ const DevicesPage = () => {
                         { value: valueToSend.toString() },
                         { headers: { 'X-AIO-Key': aioKey } }
                       );
-                      console.log('State control updated:', response.data);
+
                     } catch (error) {
                       console.error('Error updating state:', error);
                     }

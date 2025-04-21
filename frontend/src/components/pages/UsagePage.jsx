@@ -75,7 +75,7 @@ const UsagePage = () => {
     }
     fetchData();
   }, []);
-  console.log(TemperatureData)
+  //console.log(TemperatureData)
   const estimatedCost = loading
     ? null
     : Math.round(parseFloat(monthlyUsage) * 3000); // đơn vị: đồng
