@@ -113,7 +113,7 @@ const UsagePage = () => {
       <div className="grid grid-cols-1 gap-6 mb-6">
         {/* Temperature Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-semibold mb-4">Nhiệt độ</h4>
+          <h3 className="font-semibold mb-4">Nhiệt độ</h3>
           <div className="h-80 rounded-lg p-4">
             {TemperatureData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -143,7 +143,7 @@ const UsagePage = () => {
 
         {/* Humidity Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-semibold mb-4">Độ ẩm</h4>
+          <h3 className="font-semibold mb-4">Độ ẩm</h3>
           <div className="h-80 rounded-lg p-4">
             {HumidityData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -173,7 +173,7 @@ const UsagePage = () => {
 
         {/* LED Brightness Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-semibold mb-4">Độ sáng</h4>
+          <h3 className="font-semibold mb-4">Độ sáng</h3>
           <div className="h-80 bg-white-100 rounded-lg p-4">
             {LedBrightnessData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -207,6 +207,28 @@ const UsagePage = () => {
           </div>
         </div>
       </div>
+
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4">Lượng tiêu thụ điện năng (Trong 30 ngày)</h3>
+              <div className=" rounded-lg" style={{ width: '100%', height: 320 }}>
+                {!loading && dailyUsage.length ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={dailyUsage} margin={{ top: 10, right: 60, left: 40, bottom: 10 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis unit=" Wh" />
+                      <Tooltip />
+                      <Legend />
+                      <Line type="monotone" dataKey="energyWh" name="Energy (Wh)" stroke="#82ca9d" activeDot={{ r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-gray-500 flex justify-center items-center h-full">
+                    {loading ? 'Loading...' : 'No data'}
+                  </p>
+                )}
+              </div>
+            </div>
 
       {/* Usage Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

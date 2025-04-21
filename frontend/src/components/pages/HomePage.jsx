@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Link } from 'react-router-dom';
 import DeviceStatusList from '../../utils/DeviceStatusList.jsx';
 
 const DEVICE_POWER_WATT = {
@@ -148,7 +149,14 @@ const HomePage = () => {
 
       {/* Data Visualization Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h3 className="text-lg font-semibold mb-4">Lượng tiêu thụ điện năng (Trong 30 ngày)</h3>
+        <div className="relative mb-4">
+          <h3 className="text-lg font-semibold">Lượng tiêu thụ điện năng (Trong 30 ngày)</h3>
+          <div className="absolute top-0 right-0 text-sm">
+            <Link to="/usage" className="text-blue-500 hover:text-blue-400">
+              Xem chi tiết →
+            </Link>
+          </div>
+        </div>
         <div className="bg-violet-100 rounded-lg" style={{ width: '100%', height: 320 }}>
           {!loading && dailyUsage.length ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -206,7 +214,7 @@ const HomePage = () => {
           </ul>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
