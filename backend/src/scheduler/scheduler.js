@@ -28,7 +28,7 @@ const scheduleFetchData = () => {
         } catch (error) {
             console.error("Lỗi khi fetch dữ liệu:", error);
         }
-    }, 1000);
+    }, 2000);
 };
 
 scheduleFetchData();
