@@ -47,12 +47,10 @@ const ProfilePage = () => {
             },
           }
         );
-        console.log("response data:", response.data); // Log dữ liệu người dùng trả vến từ API
-
+        
         // Cập nhật state với dữ liệu người dùng
         if (response.data) {
           const user = response.data; // Lấy người dùng đầu tiên từ danh sách
-          console.log("User data:", user); // Log dữ liệu người dùng trả vến từ API
           setUserData(user);
 
           // Nếu chưa có ảnh đại diện từ localStorage, kiểm tra từ API
