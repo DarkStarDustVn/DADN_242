@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import DeviceStatusList from '../../utils/DeviceStatusList.jsx';
 
 const DEVICE_POWER_WATT = {
   led: 0.8,
@@ -106,7 +107,7 @@ const HomePage = () => {
               </svg>
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Temperature</p>
+              <p className="text-gray-500 text-sm">Nhiệt Độ</p>
               <p className="text-2xl font-semibold">{latestTemp ? `${latestTemp}°C` : '--'}</p>
               {/* <p className="text-green-500 text-sm">+2% from yesterday</p> */}
             </div>
@@ -122,7 +123,7 @@ const HomePage = () => {
               </svg>
             </div>
             <div>
-              <p className="text-gray-500 text-sm">Humidity</p>
+              <p className="text-gray-500 text-sm">Độ Ẩm</p>
               <p className="text-2xl font-semibold">{latestHumidity ? `${latestHumidity}%` : '--'}</p>
               {/* <p className="text-red-500 text-sm">-5% from yesterday</p> */}
             </div>
@@ -147,7 +148,7 @@ const HomePage = () => {
 
       {/* Data Visualization Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h3 className="text-lg font-semibold mb-4">Energy Consumption Last 30 Days</h3>
+        <h3 className="text-lg font-semibold mb-4">Lượng tiêu thụ điện năng (Trong 30 ngày)</h3>
         <div className="bg-violet-100 rounded-lg" style={{ width: '100%', height: 320 }}>
           {!loading && dailyUsage.length ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -171,41 +172,12 @@ const HomePage = () => {
       {/* Device Status Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold mb-4">Device Status</h3>
-          <ul className="divide-y divide-gray-200">
-            <li className="py-3 flex justify-between items-center">
-              <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-green-500 mr-3"></div>
-                <span>Living Room Light</span>
-              </div>
-              <span className="text-green-500">On</span>
-            </li>
-            <li className="py-3 flex justify-between items-center">
-              <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-red-500 mr-3"></div>
-                <span>Kitchen Light</span>
-              </div>
-              <span className="text-red-500">Off</span>
-            </li>
-            <li className="py-3 flex justify-between items-center">
-              <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-green-500 mr-3"></div>
-                <span>Air Conditioner</span>
-              </div>
-              <span className="text-green-500">On</span>
-            </li>
-            <li className="py-3 flex justify-between items-center">
-              <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-red-500 mr-3"></div>
-                <span>Smart TV</span>
-              </div>
-              <span className="text-red-500">Off</span>
-            </li>
-          </ul>
+          <h3 className="text-lg font-semibold mb-4">Trạng thái các thiết bị hiện tại</h3>
+          <DeviceStatusList />
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold mb-4">Recent Activities</h3>
+          <h3 className="text-lg font-semibold mb-4">Hoạt Động Gần Đây</h3>
           <ul className="divide-y divide-gray-200">
             <li className="py-3">
               <div className="flex items-center">

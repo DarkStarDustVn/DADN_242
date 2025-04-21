@@ -126,7 +126,7 @@ class DeviceManager {
     
     try {
         const response = await axios.put(`${this.apiBaseUrl}/devices/${id}`, updates);
-        
+        console.log('Device updated on server:', response.data);
         if (response.data) {
           // Use the device returned from the server
           const serverDevice = response.data;
