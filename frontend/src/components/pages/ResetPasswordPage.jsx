@@ -66,39 +66,39 @@ const ResetPasswordPage = () => {
         />
         <div className="absolute bottom-10 left-10 text-white">
           <h1 className="text-4xl font-bold mb-2">Smart Home</h1>
-          <p className="text-xl">Control your home environment with our intuitive dashboard</p>
+          <p className="text-xl">Điều khiển môi trường nhà của bạn với giao diện tiện lợi của chúng tôi</p>
         </div>
       </div>
       {/* Right side - Reset Password Form */}
       <div className="w-full md:w-1/4 flex items-center justify-center bg-gray-900 text-white p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-6">
-            <h1 className="text-4xl font-bold mb-2">Set New Password</h1>
-            <p className="text-gray-400">Enter your new password below.</p>
+            <h1 className="text-4xl font-bold mb-2">Đặt mật khẩu mới</h1>
+            <p className="text-gray-400">Nhập mật khẩu mới của bạn bên dưới.</p>
           </div>
           {message && <p className="text-green-400 mb-4 text-center">{message}</p>}
           {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-400 mb-1">New Password</label>
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-400 mb-1">Mật khẩu mới</label>
               <input
                 type="password"
                 id="newPassword"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter new password"
+                placeholder="Nhập mật khẩu mới"
               />
             </div>
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-400 mb-1">Confirm Password</label>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-400 mb-1">Xác nhận mật khẩu</label>
               <input
                 type="password"
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Confirm new password"
+                placeholder="Nhập lại mật khẩu"
               />
             </div>
             <div>
@@ -107,13 +107,13 @@ const ResetPasswordPage = () => {
                 disabled={loading}
                 className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50"
               >
-                {loading ? 'Updating...' : 'Update Password'}
+                {loading ? 'Đang thay đổi...' : 'Thay đổi mật khẩu'}
               </button>
             </div>
             <div className="text-center text-sm text-gray-400">
-              Remember your password?{' '}
+              Đã nhớ mật khẩu?{' '}
               <Link to="/" className="text-blue-500 hover:text-blue-400">
-                Back to Login
+                Quay lại đăng nhập
               </Link>
             </div>
           </form>

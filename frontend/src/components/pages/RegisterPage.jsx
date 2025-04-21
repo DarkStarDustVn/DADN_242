@@ -73,7 +73,7 @@ const RegisterPage = () => {
         />
         <div className="absolute bottom-10 left-10 text-white">
           <h1 className="text-4xl font-bold mb-2">Smart Home</h1>
-          <p className="text-xl">Control your home environment with our intuitive dashboard</p>
+          <p className="text-xl">Điều khiển môi trường nhà của bạn với giao diện tiện lợi của chúng tôi</p>
         </div>
       </div>
       
@@ -81,8 +81,8 @@ const RegisterPage = () => {
       <div className="w-full md:w-2/4 flex items-center justify-center bg-gray-900 text-white p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-2">Create Account</h1>
-            <p className="text-gray-400">Sign up to start controlling your smart home</p>
+            <h1 className="text-4xl font-bold mb-2">Tạo tài khoản mới</h1>
+            <p className="text-gray-400">Đăng ký để bắt đầu điều kiển thiết bị thông minh của bạn</p>
           </div>
           
           {error && (
@@ -95,26 +95,26 @@ const RegisterPage = () => {
             {/* Name fields - 2 inputs per row */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-400 mb-1">First Name*</label>
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-400 mb-1">Tên*</label>
                 <input 
                   type="text" 
                   id="firstName" 
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="First name"
+                  placeholder="Nhập tên"
                 />
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-400 mb-1">Last Name*</label>
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-400 mb-1">Họ*</label>
                 <input 
                   type="text" 
                   id="lastName" 
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Last name"
+                  placeholder="Nhập họ"
                 />
               </div>
             </div>
@@ -122,26 +122,26 @@ const RegisterPage = () => {
             {/* Contact fields - 2 inputs per row */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">Email Address*</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">Địa chỉ Email*</label>
                 <input 
                   type="email" 
                   id="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Email"
+                  placeholder="Nhập Email"
                 />
               </div>
               
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-1">Phone Number</label>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-1">Số điện thoại*</label>
                 <input 
                   type="text"
                   id="phone" 
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Phone number"
+                  placeholder="Nhập số điện thoại"
                 />
               </div>
             </div>
@@ -149,14 +149,14 @@ const RegisterPage = () => {
             {/* Address fields - 2 inputs per row */}
             <div className="grid gap-4">
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-400 mb-1">Address</label>
+                <label htmlFor="address" className="block text-sm font-medium text-gray-400 mb-1">Địa chỉ*</label>
                 <input 
                   type="text"
                   id="address" 
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Street address"
+                  placeholder="Nhập địa chỉ"
                 />
               </div>
             </div>
@@ -169,13 +169,13 @@ const RegisterPage = () => {
                   onClick={() => setSex('male')}
                   className={`flex-1 py-3 px-4 border ${sex === 'male' ? 'bg-blue-600 border-blue-500' : 'bg-gray-800 border-gray-700'} rounded-md cursor-pointer text-center hover:bg-gray-700 transition-colors`}
                 >
-                  Male
+                  Nam
                 </div>
                 <div 
                   onClick={() => setSex('female')}
                   className={`flex-1 py-3 px-4 border ${sex === 'female' ? 'bg-blue-600 border-blue-500' : 'bg-gray-800 border-gray-700'} rounded-md cursor-pointer text-center hover:bg-gray-700 transition-colors`}
                 >
-                  Female
+                  Nữ
                 </div>
               </div>
             </div>
@@ -183,26 +183,26 @@ const RegisterPage = () => {
             {/* Password fields - 2 inputs per row */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">Password*</label>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-400 mb-1">Mật khẩu*</label>
                 <input 
                   type="password" 
                   id="password" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Password"
+                  placeholder="Nhập mật khẩu"
                 />
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-400 mb-1">Confirm Password*</label>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-400 mb-1">Xác nhận mật khẩu*</label>
                 <input 
                   type="password" 
                   id="confirmPassword" 
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Confirm password"
+                  placeholder="Nhập lại mật khẩu"
                 />
               </div>
             </div>
@@ -213,14 +213,14 @@ const RegisterPage = () => {
                 disabled={loading}
                 className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-70"
               >
-                {loading ? 'Creating Account...' : 'Create Account'}
+                {loading ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
               </button>
             </div>
             
             <div className="text-center text-sm text-gray-400">
-              Already have an account?{' '}
+              Bạn đã có tài khoản?{' '}
               <Link to="/" className="text-blue-500 hover:text-blue-400">
-                Sign in
+                Đăng nhập
               </Link>
             </div>
           </form>

@@ -589,7 +589,7 @@ const DevicesPage = () => {
                   )}
                   
                   <div className="bg-gray-100 p-2 rounded">
-                    <p className="text-xs text-gray-500">Power</p>
+                    <p className="text-xs text-gray-500">Công suất</p>
                     <p className="font-medium">{device.power}W</p>
                   </div>
                   <div className="bg-gray-100 p-2 rounded">
