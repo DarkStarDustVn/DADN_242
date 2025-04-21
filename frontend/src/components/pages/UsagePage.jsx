@@ -2,42 +2,83 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
+const DEVICE_POWER_WATT = { led: 0.8, fan: 0.66 };
+const DEVICE_LABELS = { led: 'Đèn LED', fan: 'Quạt' };
+
 const UsagePage = () => {
   const [TemperatureData, setTemperatureData] = useState([]);
   const [HumidityData, setHumidityData] = useState([]);
   const [LedBrightnessData, setLedBrightnessData] = useState([]);
+  const [dailyUsage, setDailyUsage] = useState([]);
+  const [monthlyUsage, setMonthlyUsage] = useState(0);
+  const [deviceStats, setDeviceStats] = useState([]);
+  const [latestEnergy, setLatestEnergy] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const temperature_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-temp/data`);
-        setTemperatureData(temperature_data.data.map((data) => ({
-          temp_value: data.value,
-          date: new Date(data.created_at).toLocaleDateString(),
-        })));
+        // Sensor data
+        const [tempRes, humRes, brightRes] = await Promise.all([
+          axios.get('https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-temp/data'),
+          axios.get('https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-humidity/data'),
+          axios.get('https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-ir/data')
+        ]);
+        setTemperatureData(tempRes.data.map(d => ({ temp_value: d.value, date: new Date(d.created_at).toLocaleDateString() })));
+        setHumidityData(humRes.data.map(d => ({ humidity_value: d.value, date: new Date(d.created_at).toLocaleDateString() })));
+        setLedBrightnessData(brightRes.data.map(d => ({ led_brightness_value: d.value, date: new Date(d.created_at).toLocaleDateString(), time: new Date(d.created_at).toLocaleTimeString() })));
 
-        const humidity_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-humidity/data`);
-        setHumidityData(humidity_data.data.map((data) => ({
-          humidity_value: data.value,
-          date: new Date(data.created_at).toLocaleDateString(),
-        })));
+        // Device on/off usage for LED and Fan
+        const endpoints = ['led', 'fan'];
+        const responses = await Promise.all(endpoints.map(dev => axios.get(`http://localhost:8000/api/${dev}`)));
+        const usageByDeviceDate = {};
+        endpoints.forEach((dev, idx) => {
+          const raw = responses[idx].data.map(item => ({ timestamp: new Date(item.created_at?.$date || item.created_at), state: parseFloat(item.value) !== 0 ? 1 : 0 })).sort((a, b) => a.timestamp - b.timestamp);
+          let lastState = 0, lastOn = null;
+          usageByDeviceDate[dev] = {};
+          raw.forEach(({ timestamp, state }) => {
+            const dateKey = timestamp.toISOString().slice(0, 10);
+            if (!usageByDeviceDate[dev][dateKey]) usageByDeviceDate[dev][dateKey] = 0;
+            if (state === 1 && lastState !== 1) lastOn = timestamp;
+            if (state === 0 && lastState === 1 && lastOn) { usageByDeviceDate[dev][dateKey] += (timestamp - lastOn) / 1000; lastOn = null; }
+            lastState = state;
+          });
+        });
 
-        const Led_brightness_data = await axios.get(`https://io.adafruit.com/api/v2/An_Loi/feeds/bbc-ir/data`);
-        setLedBrightnessData(Led_brightness_data.data.map((data) => ({
-          led_brightness_value: data.value,
-          date: new Date(data.created_at).toLocaleDateString(),
-          time: new Date(data.created_at).toLocaleTimeString(),
-        })));
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth();
+        const monthStartKey = `${year}-${String(month + 1).padStart(2, '0')}-01`;
 
+        const daysCount = new Date(year, month + 1, 0).getDate();
+        const daysInMonth = Array.from({ length: daysCount }, (_, i) => new Date(year, month, i + 1).toISOString().slice(0, 10));
+        const filled = daysInMonth.map(date => ({ date, energyWh: Math.round(endpoints.reduce((sum, dev) => sum + ((usageByDeviceDate[dev][date] || 0) * DEVICE_POWER_WATT[dev]), 0) / 3600) }));
+        setDailyUsage(filled);
 
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
+        const stats = endpoints.map(dev => {
+          const totalSecs = Object.entries(usageByDeviceDate[dev]).reduce((sum, [date, secs]) => date >= monthStartKey ? sum + secs : sum, 0);
+          const hours = +(totalSecs / 3600).toFixed(3);
+          const energyKWh = +((totalSecs * DEVICE_POWER_WATT[dev] / 3600) / 1000).toFixed(3);
+          const cost = Math.round(energyKWh * 3000);
+          return { device: dev, label: DEVICE_LABELS[dev], activeHours: hours, energyKWh, cost };
+        });
+        setDeviceStats(stats);
+        setMonthlyUsage(+stats.reduce((sum, s) => sum + s.energyKWh, 0).toFixed(3));
+
+        const todayKey = today.toISOString().slice(0, 10);
+        const todayEntry = filled.find(e => e.date === todayKey);
+        setLatestEnergy(todayEntry ? todayEntry.energyWh : 0);
+
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      } finally { setLoading(false); }
     }
-
     fetchData();
-  }, []); // Empty dependency array means this effect runs once on component mount
+  }, []);
   console.log(TemperatureData)
+  const estimatedCost = loading
+    ? null
+    : Math.round(parseFloat(monthlyUsage) * 3000); // đơn vị: đồng
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -89,8 +130,8 @@ const UsagePage = () => {
                     type="monotone"
                     dataKey="temp_value"
                     name="Nhiệt độ (°C)"
-                    stroke="#8884d8" 
-                    activeDot={{ r: 8 }} 
+                    stroke="#ff7c58"
+                    activeDot={{ r: 8 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -149,8 +190,8 @@ const UsagePage = () => {
                     type="monotone"
                     dataKey="led_brightness_value"
                     name="Độ sáng"
-                    stroke="#ffc658" 
-                    activeDot={{ r: 8 }} 
+                    stroke="#6e58ff"
+                    activeDot={{ r: 8 }}
                   />
                   <Tooltip formatter={(value, name, props) => {
                     if (name === "Độ sáng") {
@@ -168,26 +209,45 @@ const UsagePage = () => {
       </div>
 
       {/* Usage Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Total Energy Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-semibold mb-2">Tổng năng lượng</h4>
-          <p className="text-3xl font-bold text-blue-600">245.8 kWh</p>
-          <p className="text-sm text-gray-500">+12% so với kỳ trước</p>
+          <h4 className="font-semibold mb-2">Tổng năng lượng tháng này</h4>
+          {loading ? (
+            <p className="text-gray-500">Đang tính toán…</p>
+          ) : (
+            <>
+              <p className="text-3xl font-bold text-blue-600">
+                {monthlyUsage} kWh
+              </p>
+            </>
+          )}
         </div>
 
-        {/* Peak Usage Card */}
+        {/* Peak Usage Card
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-2">Giờ cao điểm</h4>
           <p className="text-3xl font-bold text-orange-500">18:00 - 20:00</p>
           <p className="text-sm text-gray-500">Trung bình 4.2 kWh/giờ</p>
-        </div>
+        </div> */}
 
+        {/* Estimated Cost Card */}
         {/* Estimated Cost Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h4 className="font-semibold mb-2">Chi phí ước tính</h4>
-          <p className="text-3xl font-bold text-green-600">789.000 đ</p>
-          <p className="text-sm text-gray-500">Dựa trên giá điện hiện tại</p>
+
+          {loading ? (
+            <p className="text-gray-500">Đang tính toán…</p>
+          ) : (
+            <>
+              <p className="text-3xl font-bold text-green-600">
+                {estimatedCost.toLocaleString('vi-VN')} đ
+              </p>
+              <p className="text-sm text-gray-500">
+                Dựa trên giá 3.000 đ/kWh
+              </p>
+            </>
+          )}
         </div>
       </div>
 
@@ -200,57 +260,21 @@ const UsagePage = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thiết bị</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian hoạt động</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Năng lượng tiêu thụ</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chi phí ước tính</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thiết bị</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian (giờ)</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Năng lượng (kWh)</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chi phí (đồng)</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                    <span>Air Conditioner</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">120 giờ</td>
-                <td className="px-6 py-4 whitespace-nowrap">156.4 kWh</td>
-                <td className="px-6 py-4 whitespace-nowrap">468.000 đ</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                    <span>Living Room Light</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">85 giờ</td>
-                <td className="px-6 py-4 whitespace-nowrap">12.8 kWh</td>
-                <td className="px-6 py-4 whitespace-nowrap">38.400 đ</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-                    <span>Kitchen Light</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">42 giờ</td>
-                <td className="px-6 py-4 whitespace-nowrap">6.3 kWh</td>
-                <td className="px-6 py-4 whitespace-nowrap">18.900 đ</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-                    <span>Smart TV</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">65 giờ</td>
-                <td className="px-6 py-4 whitespace-nowrap">70.3 kWh</td>
-                <td className="px-6 py-4 whitespace-nowrap">210.900 đ</td>
-              </tr>
+              {deviceStats.map(stat => (
+                <tr key={stat.device}>
+                  <td className="px-6 py-4 whitespace-nowrap">{stat.label}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{stat.activeHours}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{stat.energyKWh}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{stat.cost.toLocaleString('vi-VN')}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
