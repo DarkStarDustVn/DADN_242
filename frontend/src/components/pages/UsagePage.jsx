@@ -81,7 +81,7 @@ const UsagePage = () => {
     : Math.round(parseFloat(monthlyUsage) * 3000); // đơn vị: đồng
   return (
     <div className="p-6">
-      <div className="mb-6">
+      {/* <div className="mb-6">
 
         <div className="flex justify-between items-center mb-4">
           <div className="flex space-x-2">
@@ -107,13 +107,13 @@ const UsagePage = () => {
             Xuất báo cáo
           </button>
         </div>
-      </div>
+      </div> */}
 
       {/* Usage Charts */}
       <div className="grid grid-cols-1 gap-6 mb-6">
         {/* Temperature Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="font-semibold mb-4">Nhiệt độ (7 ngày qua)</h4>
+          <h4 className="font-semibold mb-4">Nhiệt độ</h4>
           <div className="h-80 rounded-lg p-4">
             {TemperatureData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">

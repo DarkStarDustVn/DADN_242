@@ -434,7 +434,7 @@ const ProfilePage = () => {
             </form>
           </div>
           
-          <div className="bg-white rounded-lg shadow-md p-6">
+          {/* <div className="bg-white rounded-lg shadow-md p-6">
             <h4 className="font-semibold mb-4">Cài đặt thông báo</h4>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -468,7 +468,7 @@ const ProfilePage = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

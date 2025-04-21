@@ -152,7 +152,7 @@ const LoginPage = () => {
                 type="email"
                 id="email"
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your email"
+                placeholder="Nhập email của bạn"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -169,7 +169,7 @@ const LoginPage = () => {
                 type="password"
                 id="password"
                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your password"
+                placeholder="Nhận mật khẩu của bạn"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
