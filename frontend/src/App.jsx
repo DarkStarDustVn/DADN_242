@@ -1,63 +1,63 @@
-import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 
-import LoginPage from './components/pages/LoginPage.jsx';
-import ErrorPage from './components/pages/errorPage.jsx';
-import RegisterPage from './components/pages/RegisterPage.jsx';
-import ForgotPasswordPage from './components/pages/ForgotPasswordPage.jsx';
-import Dashboard from './components/pages/Dashboard.jsx';
-import HomePage from './components/pages/HomePage.jsx';
-import DevicesPage from './components/pages/DevicesPage.jsx';
-import UsagePage from './components/pages/UsagePage.jsx';
-import ProfilePage from './components/pages/ProfilePage.jsx';
-import ResetPasswordPage from './components/pages/ResetPasswordPage.jsx'
+import LoginPage from "./components/pages/LoginPage.jsx";
+import ErrorPage from "./components/pages/ErrorPage.jsx";
+import RegisterPage from "./components/pages/RegisterPage.jsx";
+import ForgotPasswordPage from "./components/pages/ForgotPasswordPage.jsx";
+import Dashboard from "./components/pages/Dashboard.jsx";
+import HomePage from "./components/pages/HomePage.jsx";
+import DevicesPage from "./components/pages/DevicesPage.jsx";
+import UsagePage from "./components/pages/UsagePage.jsx";
+import ProfilePage from "./components/pages/ProfilePage.jsx";
+import ResetPasswordPage from "./components/pages/ResetPasswordPage.jsx";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <LoginPage />,
     errorElement: <ErrorPage />,
   },
   {
-    path: '/register',
+    path: "/register",
     element: <RegisterPage />,
     errorElement: <ErrorPage />,
   },
   {
-    path: '/forgot-password',
+    path: "/forgot-password",
     element: <ForgotPasswordPage />,
     errorElement: <ErrorPage />,
   },
   {
-    path:'/reset-password/:token',
+    path: "/reset-password/:token",
     element: <ResetPasswordPage />,
     errorElement: <ErrorPage />,
   },
   {
-    path: '/',
+    path: "/",
     element: <Dashboard />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: 'dashboard',
+        path: "dashboard",
         element: <HomePage />,
       },
       {
-        path: 'devices',
+        path: "devices",
         element: <DevicesPage />,
       },
       {
-        path: 'usage',
+        path: "usage",
         element: <UsagePage />,
       },
       {
-        path: 'profile',
+        path: "profile",
         element: <ProfilePage />,
-      }
-    ]
-  }
-])
+      },
+    ],
+  },
+]);
 
 function App() {
   return (

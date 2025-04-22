@@ -44,7 +44,7 @@ const HomePage = () => {
       // Fetch device usage
       const endpoints = ['led', 'fan'];
       const responses = await Promise.all(
-        endpoints.map(e => axios.get(`http://localhost:8000/api/${e}`))
+        endpoints.map(e => axios.get(`${import.meta.env.VITE_APP_API_URL}/api/${e}`))
       );
       const usageByDate = {};
       responses.forEach((res, i) => {
@@ -73,9 +73,9 @@ const HomePage = () => {
 
       // Fetch latest sensors
       const [tempRes, humRes, irRes] = await Promise.all([
-        axios.get('http://localhost:8000/api/temp'),
-        axios.get('http://localhost:8000/api/humidity'),
-        axios.get('http://localhost:8000/api/ir')
+        axios.get(`${import.meta.env.VITE_APP_API_URL}/api/temp`),
+        axios.get(`${import.meta.env.VITE_APP_API_URL}/api/humidity`),
+        axios.get(`${import.meta.env.VITE_APP_API_URL}/api/ir`)
       ]);
 
       if (Array.isArray(tempRes.data) && tempRes.data.length) {

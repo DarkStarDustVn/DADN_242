@@ -30,7 +30,7 @@ const UsagePage = () => {
 
         // Device on/off usage for LED and Fan
         const endpoints = ['led', 'fan'];
-        const responses = await Promise.all(endpoints.map(dev => axios.get(`http://localhost:8000/api/${dev}`)));
+        const responses = await Promise.all(endpoints.map(dev => axios.get(`${import.meta.env.VITE_APP_API_URL}/api/${dev}`)));
         const usageByDeviceDate = {};
         endpoints.forEach((dev, idx) => {
           const raw = responses[idx].data.map(item => ({ timestamp: new Date(item.created_at?.$date || item.created_at), state: parseFloat(item.value) !== 0 ? 1 : 0 })).sort((a, b) => a.timestamp - b.timestamp);

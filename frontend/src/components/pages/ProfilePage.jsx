@@ -40,7 +40,7 @@ const ProfilePage = () => {
 
         // Gọi API với token xác thực và thêm token vào đường dẫn URL
         const response = await axios.get(
-          `http://localhost:8000/api/users/${token}`,
+          `${import.meta.env.VITE_APP_API_URL}/api/users/${token}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -97,7 +97,7 @@ const ProfilePage = () => {
       //   const formData = new FormData();
       //   formData.append('profileImage', file);
 
-      //   axios.post('http://localhost:8000/api/users/upload-profile-image', formData, {
+      //   axios.post(`${import.meta.env.VITE_APP_API_URL}/api/users/upload-profile-image`, formData, {
       //     headers: {
       //       'Authorization': `Bearer ${token}`,
       //       'Content-Type': 'multipart/form-data'
@@ -164,7 +164,7 @@ const ProfilePage = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:8000/api/users/${token}`,
+        `${import.meta.env.VITE_APP_API_URL}/api/users/${token}`,
         formData,
         {
           headers: {
@@ -471,7 +471,7 @@ const ProfilePage = () => {
                 return;
               }
               
-              axios.put('http://localhost:8000/api/users/change-password', {
+              axios.put(`${import.meta.env.VITE_APP_API_URL}/api/users/change-password`, {
                 currentPassword,
                 newPassword
               }, {
